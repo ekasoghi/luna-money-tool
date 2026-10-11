@@ -13,6 +13,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Luna Money">
 <link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/svg+xml" href="icons/favicon.svg">
 <link rel="icon" type="image/png" href="icons/icon-192.png">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -514,6 +515,10 @@ code.k{overflow-wrap:anywhere;background:var(--bg);border:1px solid var(--line);
   .card{background:#fff;border-color:#bbb;color:#000;break-inside:avoid}
   .muted,.dim,.card h3{color:#444}
 }
+/* ---------- logo resmi (assets/logo) ---------- */
+.moon{background:url(assets/logo/luna-mark.svg) center/contain no-repeat!important;border-radius:0!important;box-shadow:none!important;overflow:visible!important;filter:drop-shadow(0 0 10px rgba(226,203,140,.35))}
+.moon::before,.moon::after{display:none!important}
+@media print{.moon{filter:none}}
 </style>
 </head>
 <body class="locked">
@@ -568,7 +573,7 @@ code.k{overflow-wrap:anywhere;background:var(--bg);border:1px solid var(--line);
    ========================================================= */
 const CFG = Object.assign({supabaseUrl:"",supabaseKey:"",allowLocalAccounts:true,allowCloudSignup:true,appName:"Luna Money Tool"}, window.LUNA_CONFIG||{});
 const CLOUD = !!(CFG.supabaseUrl && CFG.supabaseKey);
-const APP_VERSION = "3.1.0";
+const APP_VERSION = "3.1.1";
 const DEVELOPER = "Luna Money Tool";
 const LUNA_MARK = `<span class="lm"><span class="moon"></span><span class="lm-t"><b>Luna</b><small>Money Tool</small></span></span>`;
 function creditHTML(){return `<footer class="credit"><span class="k">Dikembangkan oleh</span>${LUNA_MARK}<p>Luna Money Tool v${APP_VERSION}<br>© ${new Date().getFullYear()} ${DEVELOPER}. Hak cipta dilindungi.</p></footer>`}
