@@ -577,7 +577,7 @@ code.k{overflow-wrap:anywhere;background:var(--bg);border:1px solid var(--line);
    ========================================================= */
 const CFG = Object.assign({supabaseUrl:"",supabaseKey:"",allowLocalAccounts:true,allowCloudSignup:true,appName:"Luna Money Tool"}, window.LUNA_CONFIG||{});
 const CLOUD = !!(CFG.supabaseUrl && CFG.supabaseKey);
-const APP_VERSION = "3.2.0";
+const APP_VERSION = "3.2.1";
 const DEVELOPER = "Luna Money Tool";
 const LUNA_MARK = `<span class="lm"><span class="moon"></span><span class="lm-t"><b>Luna</b><small>Money Tool</small></span></span>`;
 function creditHTML(){return `<footer class="credit"><span class="k">Dikembangkan oleh</span>${LUNA_MARK}<p>Luna Money Tool v${APP_VERSION}<br>© ${new Date().getFullYear()} ${DEVELOPER}. Hak cipta dilindungi.</p></footer>`}
@@ -864,7 +864,7 @@ const Sync = {
   set(s){this.status=s;const txt={local:"Terenkripsi di perangkat",on:"Tersinkron ke cloud",login:"Cloud: masuk ulang untuk sinkron",err:"Sinkron bermasalah, coba lagi",busy:"Menyinkronkan…",lic:"Langganan tidak aktif"}[s]||"";
     const d=$("#syncDot"),t=$("#syncText");if(d)d.className="sync-dot"+(s==="on"?" on":s==="err"?" err":"");if(t)t.textContent=txt},
   async afterOpen(){
-    if(!(Auth.acc&&Auth.acc.kind==="cloud")){this.set("local");return}
+    if(!(Auth.acc&&Auth.acc.kind==="cloud")){this.set("local");if(CLOUD&&!LOCAL_OK)localMigrateSheet();return}
     try{await this.ensure();const {data}=await this.client.auth.getSession();const u=data.session?.user;
       if(u&&u.id===Auth.acc.cloudUid){
         try{const l=await this.license();this.lic=l;this.isAdmin=!!(l&&l.is_admin);const ac=Auth.acc;ac.subUntil=l.expires_at||null;ac.subAdmin=this.isAdmin;Auth.put(ac);if(!l||!l.activated){this.user=null;this.set("lic");await this.expired(u.email);return}}catch(e){if(!dbMissing(e))throw e}
@@ -942,7 +942,7 @@ const Gate = {
       const modeChoice=reg&&CLOUD&&LOCAL_OK&&CFG.allowCloudSignup!==false;
       body=`<div class="card">${o.banner?`<div class="gate-banner ${o.banner.kind}"><i data-lucide="${o.banner.kind==="ok"?"badge-check":"alert-triangle"}"></i><div><b>${o.banner.title}</b><span>${o.banner.text}</span>${o.banner.resend?`<button class="link" data-g="resend" data-email="${esc(o.email||"")}" style="margin-top:6px">Kirim ulang link aktivasi</button>`:""}</div></div>`:""}<div class="tabs" role="tablist"><button data-g="login" aria-pressed="${!reg}">Masuk</button><button data-g="register" aria-pressed="${reg}">Daftar</button></div>
         <form class="form" id="${reg?"gReg":"gLogin"}" novalidate>
-          ${reg?`<div class="field"><label for="gName">Nama</label><input class="input" id="gName" autocomplete="name" placeholder="cth: Budi Santoso" required></div>`:""}
+          ${reg?`<div class="field"><label for="gName">Nama</label><input class="input" id="gName" autocomplete="name" placeholder="cth: Budi Santoso" value="${esc(o.name||"")}" required></div>`:""}
           <div class="field"><label for="gEmail">Email</label><input class="input" id="gEmail" type="email" inputmode="email" autocomplete="${reg?"email":"username"}" value="${esc(o.email||"")}" required></div>
           ${this.pwField("gPw","Kata sandi",reg?"new-password":"current-password")}
           ${reg?`<div class="meter" id="gMeter"><i></i><i></i><i></i><i></i></div><div class="helptext" id="gPwHint">Minimal 8 karakter, campuran huruf dan angka.</div>${this.pwField("gPw2","Ulangi kata sandi","new-password")}`:""}
@@ -1077,8 +1077,9 @@ const Gate = {
     const local=Auth.find(email,"local");
     this.busy(true,"Memeriksa…");
     try{
-      if(local){Auth.throttle(local);try{const {key}=await unwrapRaw(local.pw,pw);Auth.okay(local);await Auth.open(local,key);return}catch(e){Auth.fail(local);throw new Error("Email atau kata sandi salah.")}}
-      if(CLOUD){await this.cloudSignIn(email,pw);return}
+      const openLocal=async()=>{Auth.throttle(local);try{const {key}=await unwrapRaw(local.pw,pw);Auth.okay(local);await Auth.open(local,key)}catch(e){Auth.fail(local);throw new Error("Email atau kata sandi salah.")}};
+      if(local&&(LOCAL_OK||!CLOUD)){await openLocal();return}
+      if(CLOUD){try{await this.cloudSignIn(email,pw);return}catch(e){if(local&&e.code!=="unconfirmed"){await openLocal();return}throw e}}
       throw new Error("Email atau kata sandi salah.");
     }catch(e){ if(e.code==="unconfirmed"){this.show("verify",{email:e.email});this.err(e.message);return} this.err(e.message)}
     finally{this.busy(false)}
@@ -1115,7 +1116,7 @@ const Gate = {
     const p=pwProblem(pw); if(p) return this.err(p);
     if(pw!==pw2) return this.err("Kedua kata sandi belum sama.");
     if(!$("#gAgree").checked) return this.err("Centang persetujuan di atas untuk melanjutkan.");
-    if(Auth.find(email)) return this.err("Email ini sudah terdaftar di perangkat ini. Silakan masuk.");
+    if(Auth.find(email,"cloud")||((LOCAL_OK||mode!=="cloud")&&Auth.find(email))) return this.err("Email ini sudah terdaftar di perangkat ini. Silakan masuk.");
     this.busy(true,"Membuat akun aman…");
     try{
       if(mode==="cloud"){
@@ -1195,6 +1196,7 @@ const NAV=[
   {id:"report",n:"Laporan",i:"bar-chart-3"},
   {id:"insight",n:"Analisa",i:"sparkles"},
   {id:"settings",n:"Akun & Pengaturan",i:"settings"},
+  {id:"sub",n:"Langganan",i:"credit-card"},
   {id:"manual",n:"Manual",i:"book-open"},
   {id:"admin",n:"Super Admin",i:"shield-check"},
 ];
@@ -1652,7 +1654,7 @@ const MANUAL=[
   warn:"File cadangan tidak terenkripsi. Simpan di tempat pribadi seperti Google Drive milik Anda sendiri."},
  {id:"langganan",t:"Langganan & pembayaran",i:"credit-card",
   p:"Akun cloud Luna memakai sistem langganan. Pendaftar baru mendapat masa coba gratis, lalu memilih paket bulanan atau tahunan. Pembayaran diproses aman oleh DOKU.",
-  s:["Setelah link aktivasi email dibuka dan Anda masuk, <b>masa coba gratis</b> langsung berjalan (jika diaktifkan admin).","Saat masa coba atau langganan hampir habis, Beranda menampilkan pengingat dengan tombol <b>Perpanjang</b>. Bisa juga lewat <b>Akun & Pengaturan → Langganan → Perpanjang</b>.","Pilih paket, lalu ketuk <b>Bayar sekarang</b>. Anda diarahkan ke halaman pembayaran DOKU: pilih QRIS, Virtual Account, e-wallet, kartu, atau gerai retail.","Setelah bayar, Anda kembali ke Luna. Halaman <b>Memeriksa pembayaran</b> lanjut otomatis begitu pembayaran terkonfirmasi, biasanya dalam hitungan detik.","Perpanjangan selalu ditambahkan setelah tanggal berakhir yang sekarang, jadi tidak ada hari yang hilang.","Punya <b>kode voucher</b>? Buka bagian <b>Punya kode voucher?</b> di halaman langganan, ketik kodenya, lalu ketuk <b>Pakai voucher</b>.","Jika admin mengaktifkan <b>transfer manual</b>, Anda bisa transfer ke rekening/QRIS admin lalu upload bukti. Langganan aktif setelah admin memverifikasi."],
+  s:["Setelah link aktivasi email dibuka dan Anda masuk, <b>masa coba gratis</b> langsung berjalan (jika diaktifkan admin).","Saat masa coba atau langganan hampir habis, Beranda menampilkan pengingat dengan tombol <b>Perpanjang</b>. Bisa juga lewat <b>Menu → Langganan</b>.","Pilih paket, lalu ketuk <b>Bayar sekarang</b>. Anda diarahkan ke halaman pembayaran DOKU: pilih QRIS, Virtual Account, e-wallet, kartu, atau gerai retail.","Setelah bayar, Anda kembali ke Luna. Halaman <b>Memeriksa pembayaran</b> lanjut otomatis begitu pembayaran terkonfirmasi, biasanya dalam hitungan detik.","Perpanjangan selalu ditambahkan setelah tanggal berakhir yang sekarang, jadi tidak ada hari yang hilang.","Punya <b>kode voucher</b>? Buka bagian <b>Punya kode voucher?</b> di halaman langganan, ketik kodenya, lalu ketuk <b>Pakai voucher</b>.","Jika admin mengaktifkan <b>transfer manual</b>, Anda bisa transfer ke rekening/QRIS admin lalu upload bukti. Langganan aktif setelah admin memverifikasi."],
   tip:"Jika langganan berakhir, data Anda tidak dihapus. Data tetap terenkripsi dan bisa dibuka lagi setelah perpanjang."},
  {id:"superadmin",t:"Super Admin",i:"shield-check",
   p:"Menu Super Admin hanya muncul untuk email yang terdaftar sebagai admin.",
@@ -2036,7 +2038,32 @@ function viewAdmin(){
 }
 function afterAdmin(){if(Sync.isAdmin){Admin.bind();Admin.load()}}
 
-const VIEWS={admin:[viewAdmin,afterAdmin],manual:[viewManual,afterManual],home:[viewHome,afterHome],tx:[viewTx,afterTx],budget:[viewBudget,afterBudget],report:[viewReport,afterReport],insight:[viewInsight,afterInsight],settings:[viewSettings,afterSettings]};
+
+/* ---------- Menu Langganan ---------- */
+function viewSub(){
+  const a=Auth.acc||{};
+  const head=`<div><h2 class="section-title">Langganan</h2><p class="lede">Status langganan, paket, dan pembayaran online lewat DOKU.</p></div>`;
+  if(!CLOUD) return head+`<div class="card"><div class="empty"><b>Langganan belum diaktifkan</b>Aplikasi ini belum terhubung ke server cloud, jadi semua fitur dipakai di perangkat ini tanpa langganan.</div></div>`;
+  if(a.kind!=="cloud") return head+`<div class="card"><h3><i data-lucide="smartphone"></i>Anda memakai akun perangkat</h3><p class="helptext" style="margin-top:0">Langganan hanya berlaku untuk <b>akun cloud</b> (masuk dengan email, data tersinkron di HP dan laptop). Pindahkan data Anda ke akun cloud untuk berlangganan.</p><button class="btn primary" data-act="migrate-cloud"><i data-lucide="upload-cloud"></i>Pindahkan ke akun cloud</button></div>`;
+  if(Sync.isAdmin) return head+`<div class="card"><div class="gate-banner ok"><i data-lucide="shield-check"></i><div><b>Super admin</b><span>Akun admin aktif tanpa batas waktu. Harga paket dan masa coba diatur di Super Admin → Pengaturan. Pratinjau halaman langganan pengguna ada di bawah.</span></div></div><div id="licBoxV" style="margin-top:12px"><div class="empty dim">Memuat paket…</div></div></div>`;
+  return head+`<div class="card"><div id="licBoxV"><div class="empty dim">Memuat status langganan…</div></div></div>`;
+}
+function afterSub(){if($("#licBoxV")){Lic.box="#licBoxV";Lic.returned=false;Lic.fill().then(()=>Lic.startPoll())}}
+function localMigrateSheet(){
+  const root=$("#modalRoot");
+  root.innerHTML=`<div class="overlay" id="ov"><div class="sheet"><div class="sheet-h"><h2>Pindah ke akun cloud</h2></div>
+    <p class="helptext" style="margin-top:0">Luna kini memakai <b>akun cloud berlangganan</b>: masuk dengan email, data terenkripsi dan tersinkron di HP serta laptop. Akun perangkat <b>${esc(Auth.acc?.email||"")}</b> tidak lagi didukung.</p>
+    <ol class="helptext" style="padding-left:18px;margin:0 0 6px"><li>Unduh cadangan data Anda.</li><li>Daftar akun cloud (bisa memakai email yang sama) dan buka link aktivasi di email.</li><li>Masuk, lalu buka <b>Akun & Pengaturan → Impor</b> dan pilih file cadangan tadi.</li></ol>
+    <div class="form" style="gap:10px"><button class="btn block" data-m="backup"><i data-lucide="download"></i>1. Unduh cadangan data</button>
+    <button class="btn primary block" data-m="register"><i data-lucide="user-plus"></i>2. Daftar akun cloud</button>
+    <button class="link" data-m="out" style="align-self:center">Keluar</button></div></div></div>`;
+  icons();
+  $("#ov").onclick=async e=>{const b=e.target.closest("[data-m]");if(!b)return;
+    if(b.dataset.m==="backup"){download(`luna-cadangan-${today()}.json`,JSON.stringify({app:"Luna Money Tool",v:2,exported:new Date().toISOString(),tx:state.tx,profile:state.profile},null,1),"application/json");toast("Cadangan diunduh. Simpan file ini.")}
+    else if(b.dataset.m==="register"){const em=Auth.acc?.email||"",nm=Auth.acc?.name||"";await Auth.lock(true);Gate.show("register",{email:em,name:nm})}
+    else if(b.dataset.m==="out"){await Auth.lock(true)}};
+}
+const VIEWS={sub:[viewSub,afterSub],admin:[viewAdmin,afterAdmin],manual:[viewManual,afterManual],home:[viewHome,afterHome],tx:[viewTx,afterTx],budget:[viewBudget,afterBudget],report:[viewReport,afterReport],insight:[viewInsight,afterInsight],settings:[viewSettings,afterSettings]};
 function render(){
   if(!Auth.key) return;
   renderNav();
@@ -2179,7 +2206,7 @@ function openForm(init={},opts={}){
 function openMenu(){
   const root=$("#modalRoot"); root.onclick=null;
   const items=[["view","home","layout-dashboard","Beranda"],["view","tx","list","Transaksi"],["view","report","bar-chart-3","Laporan Arus Kas"],
-    ["view","budget","target","Anggaran"],["view","insight","sparkles","Analisa"],["view","settings","settings","Akun & Pengaturan"],["view","manual","book-open","Manual"],...(Sync.isAdmin?[["view","admin","shield-check","Super Admin"+(Sync.pendingPay?" ("+Sync.pendingPay+")":"")]]:[]),
+    ["view","budget","target","Anggaran"],["view","insight","sparkles","Analisa"],["view","settings","settings","Akun & Pengaturan"],["view","sub","credit-card","Langganan"],["view","manual","book-open","Manual"],...(Sync.isAdmin?[["view","admin","shield-check","Super Admin"+(Sync.pendingPay?" ("+Sync.pendingPay+")":"")]]:[]),
     ["act","add","plus","Tambah Transaksi"],["act","gallery","images","Upload dari Galeri"],["act","lock","lock","Kunci Aplikasi"]];
   root.innerHTML=`<div class="overlay" id="ov"><div class="sheet"><div class="sheet-h"><h2>Menu</h2><button class="icon-btn" data-close aria-label="Tutup"><i data-lucide="x"></i></button></div>
     <div class="menu-grid">${items.map(([k,v,i,n])=>`<button data-m${k}="${v}" ${k==="view"&&state.view===v?'aria-current="page"':""}><i data-lucide="${i}"></i>${n}</button>`).join("")}</div>${creditHTML()}</div></div>`;
@@ -2379,6 +2406,7 @@ document.addEventListener("click",async e=>{
     case "print":window.print();break;
     case "lock":Auth.lock();break;
     case "renew":Lic.openRenew();break;
+    case "migrate-cloud":localMigrateSheet();break;
     case "logout":logoutDialog();break;
     case "set-pin":setPinDialog();break;
     case "del-pin":{const ac=Auth.acc;ac.pin=null;Auth.put(ac);render();toast("PIN dihapus");break}

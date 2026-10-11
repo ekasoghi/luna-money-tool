@@ -1,7 +1,7 @@
 /* Luna Money Tool — service worker
    Membuat aplikasi bisa dibuka tanpa internet setelah kunjungan pertama.
    Naikkan VERSION setiap kali Anda meng-upload versi baru index.html. */
-const VERSION = "luna-v3.2.0";
+const VERSION = "luna-v3.2.1";
 const SHELL = ["./", "./index.html", "./config.js", "./manifest.webmanifest", "./icons/icon-192.png", "./icons/icon-512.png", "./icons/apple-touch-icon.png","./icons/favicon.svg","./assets/logo/luna-mark.svg","./assets/logo/luna-logo-app.webp"];
 
 self.addEventListener("install", (e) => {
