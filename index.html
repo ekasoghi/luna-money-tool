@@ -443,6 +443,19 @@ code.k{overflow-wrap:anywhere;background:var(--bg);border:1px solid var(--line);
 .mk.dot{width:7px;height:7px;background:var(--line-2);margin:8px 7px 0 6px!important}
 @media (max-width:600px){.man-title h3{font-size:19px}.toc{grid-template-columns:1fr 1fr}.toc button{font-size:12px;padding:8px}.shot img{max-width:240px}.manual-sheet .shot img{max-width:220px}}
 
+/* ---------- aktivasi akun ---------- */
+.act-card{text-align:left}
+.act-ico{width:56px;height:56px;border-radius:18px;display:grid;place-items:center;background:rgba(226,203,140,.12);color:var(--moon);margin-bottom:12px}
+.act-ico svg{width:28px;height:28px}
+.act-steps{margin:12px 0 0;padding-left:20px;display:flex;flex-direction:column;gap:6px;font-size:13px;color:var(--muted)}
+.act-steps li::marker{color:var(--moon);font-weight:700}
+.gate-banner{display:flex;gap:10px;align-items:flex-start;border-radius:12px;padding:12px;margin-bottom:14px;font-size:13px}
+.gate-banner svg{flex:none;margin-top:1px}
+.gate-banner b{display:block;color:var(--fg);margin-bottom:2px}
+.gate-banner span{color:var(--muted)}
+.gate-banner.ok{background:rgba(92,211,166,.1);border:1px solid rgba(92,211,166,.35)}.gate-banner.ok svg{color:var(--in)}
+.gate-banner.bad{background:rgba(242,134,122,.08);border:1px solid rgba(242,134,122,.35)}.gate-banner.bad svg{color:var(--out)}
+
 /* ---------- kredit pengembang ---------- */
 .credit{display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center;padding:26px 8px 6px;margin-top:8px;border-top:1px solid var(--line);color:var(--dim);font-size:11.5px}
 .credit .k{font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:700}
@@ -521,7 +534,7 @@ code.k{overflow-wrap:anywhere;background:var(--bg);border:1px solid var(--line);
    ========================================================= */
 const CFG = Object.assign({supabaseUrl:"",supabaseKey:"",allowLocalAccounts:true,allowCloudSignup:true,appName:"Luna Money Tool"}, window.LUNA_CONFIG||{});
 const CLOUD = !!(CFG.supabaseUrl && CFG.supabaseKey);
-const APP_VERSION = "2.4.0";
+const APP_VERSION = "2.5.0";
 const DEVELOPER = "Balieka Mediatama";
 function creditHTML(){return `<footer class="credit"><span class="k">Dikembangkan oleh</span><img class="screen-logo" src="assets/balieka-logo-light.png" alt="${DEVELOPER}" width="125" height="40"><img class="print-logo" src="assets/balieka-logo.png" alt="${DEVELOPER}" width="125" height="40"><p>Luna Money Tool v${APP_VERSION}<br>© ${new Date().getFullYear()} ${DEVELOPER}. Hak cipta dilindungi.</p></footer>`}
 const LOCAL_OK = CFG.allowLocalAccounts!==false || !CLOUD;
@@ -873,7 +886,7 @@ const Gate = {
       const reg=v==="register";
       const legacy=!!localStorage.getItem("luna.v1");
       const modeChoice=reg&&CLOUD&&LOCAL_OK&&CFG.allowCloudSignup!==false;
-      body=`<div class="card"><div class="tabs" role="tablist"><button data-g="login" aria-pressed="${!reg}">Masuk</button><button data-g="register" aria-pressed="${reg}">Daftar</button></div>
+      body=`<div class="card">${o.banner?`<div class="gate-banner ${o.banner.kind}"><i data-lucide="${o.banner.kind==="ok"?"badge-check":"alert-triangle"}"></i><div><b>${o.banner.title}</b><span>${o.banner.text}</span>${o.banner.resend?`<button class="link" data-g="resend" data-email="${esc(o.email||"")}" style="margin-top:6px">Kirim ulang link aktivasi</button>`:""}</div></div>`:""}<div class="tabs" role="tablist"><button data-g="login" aria-pressed="${!reg}">Masuk</button><button data-g="register" aria-pressed="${reg}">Daftar</button></div>
         <form class="form" id="${reg?"gReg":"gLogin"}" novalidate>
           ${reg?`<div class="field"><label for="gName">Nama</label><input class="input" id="gName" autocomplete="name" placeholder="cth: Budi Santoso" required></div>`:""}
           <div class="field"><label for="gEmail">Email</label><input class="input" id="gEmail" type="email" inputmode="email" autocomplete="${reg?"email":"username"}" value="${esc(o.email||"")}" required></div>
@@ -899,8 +912,15 @@ const Gate = {
         <button class="btn primary block" style="margin-top:10px" data-g="enter">Lanjut ke Luna</button></div>`;
     }
     else if(v==="verify"){
-      body=`<div class="card"><h2>Cek email Anda</h2><p class="helptext">Kami mengirim tautan verifikasi ke <b>${esc(o.email)}</b>. Buka tautan itu, lalu kembali ke sini dan masuk dengan email dan kata sandi Anda. Periksa folder Spam jika belum ada.</p>
-        <button class="btn primary block" data-g="login" data-email="${esc(o.email)}">Saya sudah verifikasi, masuk</button></div>`;
+      body=`<div class="card act-card"><div class="act-ico"><i data-lucide="mail-check"></i></div><h2>Aktifkan akun Anda</h2>
+        <p class="helptext">${o.resent?"Link aktivasi baru":"Link aktivasi"} sudah dikirim ke <b>${esc(o.email)}</b>. Akun baru bisa dipakai setelah link itu dibuka.</p>
+        <ol class="act-steps"><li>Buka aplikasi email di HP atau laptop.</li><li>Cari email berjudul <b>Aktifkan akun Luna Money Tool</b>. Jika belum ada, cek folder <b>Spam</b> atau <b>Promosi</b>.</li><li>Ketuk tombol <b>Aktifkan akun</b> di email. Luna terbuka otomatis, lalu masuk dengan kata sandi Anda.</li></ol>
+        <div class="err" id="gErr"></div><div class="ok" id="gOk"></div>
+        <div class="form" style="gap:10px;margin-top:14px">
+          <button class="btn block" id="gResend" data-g="resend" data-email="${esc(o.email)}"><i data-lucide="send"></i>Kirim ulang link aktivasi</button>
+          <button class="btn primary block" data-g="login" data-email="${esc(o.email)}"><i data-lucide="log-in"></i>Sudah aktif, masuk</button>
+          <button class="link" data-g="register" style="align-self:center">Salah email? Daftar ulang</button>
+        </div></div>`;
     }
     else if(v==="forgot"){
       const kind=o.kind||(Auth.find(o.email||"","local")?"local":(CLOUD?"cloud":"local"));
@@ -938,6 +958,7 @@ const Gate = {
       else if(a==="use-pin") this.show("unlock",{...this.opts,mode:"pin"});
       else if(a==="forgot") this.show("forgot",{email:b.dataset.email||$("#gEmail")?.value||this.opts.email||"",kind:b.dataset.kind});
       else if(a==="manual") openManualOverlay();
+      else if(a==="resend") this.resend(b.dataset.email||$("#gEmail")?.value||this.opts.email||"");
       else if(a==="copy-code"){try{await navigator.clipboard.writeText(this.opts.code);toast("Kode disalin")}catch(err){toast("Salin manual kode di atas")}}
       else if(a==="enter"){ if(!$("#gSaved").checked){this.err("Centang dulu bahwa kode sudah disimpan.");return} const p=this.opts.pending; await Auth.open(p.acc,p.key); if(p.legacy){const n=await migrateLegacy();if(n){render();toast(`${n} transaksi lama dipindahkan ke akun Anda`)}} else toast("Selamat datang di Luna"); }
     };
@@ -951,6 +972,23 @@ const Gate = {
     $("#gResetCloud")?.addEventListener("submit",e=>{e.preventDefault();this.doResetCloud()});
     const pin=$("#gPin");if(pin)pin.addEventListener("input",()=>{pin.value=pin.value.replace(/\D/g,"").slice(0,6);if(pin.value.length===6)this.doUnlock()});
   },
+  resendUntil:0,
+  async resend(email){
+    email=String(email||"").trim().toLowerCase();this.err("");
+    if(!validEmail(email)){this.show("login",{banner:{kind:"bad",title:"Isi email Anda",text:"Tulis email yang dipakai saat mendaftar, lalu ketuk Kirim ulang link aktivasi.",resend:true}});return}
+    const wait=Math.ceil((this.resendUntil-Date.now())/1000);
+    if(wait>0){this.err(`Tunggu ${wait} detik sebelum mengirim ulang.`);return}
+    const btn=$("#gResend");if(btn)btn.disabled=true;
+    try{await Sync.ensure();const {error}=await Sync.client.auth.resend({type:"signup",email,options:{emailRedirectTo:location.origin+location.pathname}});
+      if(error) throw error;
+      this.resendUntil=Date.now()+60e3;
+      this.show("verify",{email,resent:true});
+      this.tickResend();
+    }catch(e){this.err(/rate|seconds|security purposes/i.test(e.message||"")?"Terlalu sering. Tunggu sekitar 1 menit, lalu coba lagi.":(e.message||"Gagal mengirim ulang link aktivasi."));if(btn)btn.disabled=false}
+  },
+  tickResend(){const btn=$("#gResend");if(!btn)return;const left=Math.ceil((this.resendUntil-Date.now())/1000);
+    if(left>0){btn.disabled=true;btn.textContent=`Kirim ulang dalam ${left} detik`;setTimeout(()=>this.tickResend(),1000)}
+    else{btn.disabled=false;btn.innerHTML='<i data-lucide="send"></i>Kirim ulang link aktivasi';icons()}},
   async doUnlock(){
     const a=Auth.get(this.opts.accId)||Object.values(Auth.list())[0];this.err("");
     try{Auth.throttle(a)}catch(e){this.err(e.message);return}
@@ -981,20 +1019,20 @@ const Gate = {
       if(local){Auth.throttle(local);try{const {key}=await unwrapRaw(local.pw,pw);Auth.okay(local);await Auth.open(local,key);return}catch(e){Auth.fail(local);throw new Error("Email atau kata sandi salah.")}}
       if(CLOUD){await this.cloudSignIn(email,pw);return}
       throw new Error("Email atau kata sandi salah.");
-    }catch(e){this.err(e.message)}
+    }catch(e){ if(e.code==="unconfirmed"){this.show("verify",{email:e.email});this.err(e.message);return} this.err(e.message)}
     finally{this.busy(false)}
   },
   async cloudSignIn(email,pw){
     await Sync.ensure();
     const {data,error}=await Sync.client.auth.signInWithPassword({email,password:pw});
-    if(error){ if(/confirm/i.test(error.message)) throw new Error("Email belum diverifikasi. Buka tautan di email Anda dulu."); throw new Error("Email atau kata sandi salah."); }
+    if(error){ if(/confirm/i.test(error.message)){const e=new Error("Akun belum diaktifkan. Buka link aktivasi di email Anda.");e.code="unconfirmed";e.email=email;throw e} throw new Error("Email atau kata sandi salah."); }
     const user=data.user;
     let a=Object.values(Auth.list()).find(x=>x.kind==="cloud"&&x.cloudUid===user.id);
     let key=null;
     if(a){try{key=(await unwrapRaw(a.pw,pw)).key}catch(e){ // kata sandi berubah: buat ulang kunci perangkat, data ditarik dari cloud
       const name=a.name;Auth.remove(a.id);a=null;const r=await Auth.createDevice({kind:"cloud",name,email,password:pw,cloudUid:user.id});a=r.acc;key=r.key}}
     else{const r=await Auth.createDevice({kind:"cloud",name:user.user_metadata?.name||email.split("@")[0],email,password:pw,cloudUid:user.id});a=r.acc;key=r.key}
-    Auth.okay(a); Sync.user=user; await Auth.open(a,key);
+    Auth.okay(a); Sync.user=user; try{localStorage.removeItem("luna.pendingEmail")}catch(e){} await Auth.open(a,key);
   },
   async doRegister(){
     const name=$("#gName").value.trim(), email=$("#gEmail").value.trim().toLowerCase(), pw=$("#gPw").value, pw2=$("#gPw2").value;
@@ -1013,7 +1051,7 @@ const Gate = {
         await Sync.ensure();
         const {data,error}=await Sync.client.auth.signUp({email,password:pw,options:{data:{name},emailRedirectTo:location.origin+location.pathname}});
         if(error) throw new Error(/registered|exists/i.test(error.message)?"Email sudah terdaftar. Silakan masuk.":error.message);
-        if(!data.session){ this.show("verify",{email}); return }
+        if(!data.session){ try{localStorage.setItem("luna.pendingEmail",email)}catch(e){} this.show("verify",{email}); return }
         const r=await Auth.createDevice({kind:"cloud",name,email,password:pw,cloudUid:data.user.id});
         Sync.user=data.user; Auth.okay(r.acc); await Auth.open(r.acc,r.key);
         if(legacy){const n=await migrateLegacy();if(n){render();toast(`${n} transaksi lama dipindahkan ke akun Anda`)}}
@@ -1485,7 +1523,7 @@ const MANUAL=[
  {id:"daftar",t:"Daftar akun baru",i:"user-plus",img:"01-daftar",cap:"Formulir pendaftaran. Angka pada gambar sesuai nomor langkah.",
   p:"Saat pertama membuka Luna, buat akun terlebih dahulu.",
   s:["[1] Pilih tab <b>Daftar</b>.","[2] Isi <b>nama</b> dan <b>email</b> Anda.","[3] Buat <b>kata sandi</b> minimal 8 karakter, campuran huruf dan angka. Garis di bawahnya menunjukkan kekuatan sandi. Ulangi kata sandi di kolom berikutnya.","[4] Centang persetujuan.","[5] Ketuk <b>Buat akun</b>."],
-  tip:"Jika pemilik aplikasi mengaktifkan akun cloud, Anda bisa memilih <b>Cloud</b> agar data tersinkron di HP dan laptop. Akun cloud perlu verifikasi lewat email."},
+  tip:"Untuk akun cloud, Luna mengirim <b>link aktivasi</b> ke email Anda. Buka email berjudul <b>Aktifkan akun Luna Money Tool</b>, ketuk <b>Aktifkan akun</b>, lalu masuk dengan kata sandi Anda. Jika email belum datang, cek folder Spam atau ketuk <b>Kirim ulang link aktivasi</b>."},
  {id:"pemulihan",t:"Simpan kode pemulihan",i:"key-round",img:"02-kode",cap:"Kode pemulihan hanya tampil satu kali.",
   p:"Setelah mendaftar akun perangkat, Luna menampilkan kode pemulihan 16 karakter.",
   s:["[1] Tulis kode ini di kertas atau simpan di aplikasi pengelola kata sandi.","[2] Ketuk <b>Salin</b> jika ingin menyalinnya.","[3] Centang <b>Saya sudah menyimpan kode pemulihan di tempat aman</b>.","[4] Ketuk <b>Lanjut ke Luna</b>."],
@@ -1545,6 +1583,8 @@ const MANUAL=[
   s:["<b>Android (Chrome):</b> buka Luna, ketuk menu titik tiga, lalu pilih <b>Instal aplikasi</b> atau <b>Tambahkan ke layar utama</b>.","<b>iPhone (Safari):</b> buka Luna, ketuk tombol <b>Bagikan</b>, lalu pilih <b>Tambah ke Layar Utama</b>.","<b>Laptop (Chrome/Edge):</b> klik ikon Instal di ujung kanan kolom alamat."]},
 ];
 const FAQ=[
+ ["Saya tidak menerima email aktivasi.","Cek folder Spam atau Promosi. Pastikan email yang diketik benar. Di halaman Aktifkan akun, ketuk Kirim ulang link aktivasi (bisa diulang setiap 1 menit). Link aktivasi berlaku 24 jam."],
+ ["Link aktivasi kedaluwarsa atau tidak berlaku.","Buka Luna, isi email Anda di halaman masuk, lalu ketuk Kirim ulang link aktivasi. Selalu pakai email aktivasi yang paling baru."],
  ["Apakah data saya bisa dilihat orang lain?","Tidak. Data di perangkat dienkripsi dan hanya terbuka dengan kata sandi atau PIN Anda. Untuk akun cloud, setiap akun hanya bisa membaca datanya sendiri."],
  ["Bagaimana jika saya lupa kata sandi?","Akun perangkat: pakai kode pemulihan di Lupa kata sandi. Akun cloud: minta tautan atur ulang lewat email."],
  ["Kenapa data di HP dan laptop berbeda?","Akun perangkat menyimpan data di masing-masing perangkat. Gunakan akun cloud yang sama di keduanya, atau pindahkan data lewat Cadangan (.json) lalu Impor."],
@@ -1951,7 +1991,14 @@ async function boot(){
   const authHash=/access_token|type=recovery|error_description/.test(location.hash);
   if(CLOUD&&authHash){try{await Sync.ensure();await new Promise(r=>setTimeout(r,400))}catch(e){}}
   if(Sync.recovery) return; // layar atur ulang kata sandi sudah tampil
-  if(authHash){try{history.replaceState(null,"",location.pathname)}catch(e){}}
+  if(authHash){
+    const h=new URLSearchParams(location.hash.slice(1)); const type=h.get("type"); const errCode=h.get("error_code")||h.get("error");
+    try{history.replaceState(null,"",location.pathname)}catch(e){}
+    if(errCode){Gate.show("login",{banner:{kind:"bad",title:"Link aktivasi tidak berlaku",text:"Link sudah kedaluwarsa atau sudah pernah dipakai. Isi email Anda di bawah, lalu kirim ulang link aktivasi.",resend:true}});return}
+    if(CLOUD&&(type==="signup"||type==="email"||type==="invite")){
+      let email="";try{const {data}=await Sync.client.auth.getSession();email=data.session?.user?.email||""}catch(e){} if(!email){try{email=localStorage.getItem("luna.pendingEmail")||""}catch(e){}}
+      Gate.show("login",{email,banner:{kind:"ok",title:"Akun berhasil diaktifkan",text:"Masukkan kata sandi yang Anda buat saat mendaftar untuk mulai memakai Luna."}});return}
+  }
   const accs=Object.values(Auth.list());
   if(accs.length){const last=accs.sort((a,b)=>(b.lastLogin||0)-(a.lastLogin||0))[0];Gate.show("unlock",{accId:last.id})}
   else Gate.show(localStorage.getItem("luna.v1")?"register":"login");

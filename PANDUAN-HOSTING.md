@@ -77,6 +77,29 @@ Catatan email: layanan email bawaan Supabase dibatasi jumlahnya per jam dan ditu
 
 ---
 
+## Langkah 2b — Link aktivasi email untuk pendaftar baru
+
+Setelah akun cloud aktif (Langkah 2), setiap orang yang mendaftar **wajib membuka link aktivasi** di emailnya sebelum bisa masuk. Ini mencegah orang mendaftar memakai email milik orang lain.
+
+1. **Wajibkan akun cloud.** Di `config.js` biarkan `allowLocalAccounts: false` (sudah bawaan). Pendaftar tidak bisa lagi memilih "akun perangkat" tanpa verifikasi.
+2. **Pastikan konfirmasi email aktif:** Supabase → **Authentication → Sign In / Providers → Email** → **Confirm email** menyala.
+3. **Alamat tujuan link:** Supabase → **Authentication → URL Configuration**:
+   - **Site URL**: alamat Luna, misalnya `https://money.domainanda.com`
+   - **Redirect URLs**: tambahkan alamat yang sama (dan alamat Netlify/Hostinger lain yang dipakai).
+   Tanpa ini, link di email bisa mengarah ke alamat yang salah.
+4. **Pasang email berbahasa Indonesia dengan logo:** Supabase → **Authentication → Emails → Templates**:
+   - **Confirm signup** → Subject: `Aktifkan akun Luna Money Tool` → tempel isi `email-templates/aktivasi-akun.html`.
+   - **Reset password** → Subject: `Atur ulang kata sandi Luna Money Tool` → tempel isi `email-templates/atur-ulang-kata-sandi.html`.
+5. **Pengirim email (disarankan untuk pengguna banyak):** layanan email bawaan Supabase dibatasi jumlahnya dan ditujukan untuk uji coba. Pasang SMTP sendiri di **Authentication → Emails → SMTP Settings**, misalnya email bisnis dari Hostinger, Brevo, atau layanan SMTP lain. Isi nama pengirim `Luna Money Tool` agar email mudah dikenali.
+
+Yang dialami pengguna:
+- Setelah klik **Buat akun**, muncul halaman **Aktifkan akun Anda** berisi langkah membuka email, tombol **Kirim ulang link aktivasi** (bisa diulang setiap 60 detik), dan **Sudah aktif, masuk**.
+- Saat link di email dibuka, Luna menampilkan **Akun berhasil diaktifkan**, email sudah terisi, tinggal ketik kata sandi.
+- Jika link sudah kedaluwarsa atau sudah dipakai, Luna menampilkan peringatan dan tombol untuk mengirim ulang.
+- Jika mencoba masuk sebelum aktivasi, Luna mengarahkan kembali ke halaman **Aktifkan akun Anda**.
+
+---
+
 ## Langkah 3 — Upload
 
 ### Netlify (±5 menit)

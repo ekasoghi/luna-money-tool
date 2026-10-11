@@ -13,6 +13,6 @@
 window.LUNA_CONFIG = {
   supabaseUrl: "",          // contoh: "https://abcd1234.supabase.co"
   supabaseKey: "",          // contoh: "sb_publishable_xxx" atau "eyJhbGciOi..."
-  allowLocalAccounts: true, // false = semua pengguna wajib akun cloud
+  allowLocalAccounts: false, // false = setiap pendaftar wajib akun cloud + link aktivasi email (berlaku jika Supabase diisi)
   allowCloudSignup: true    // false = pendaftaran baru ditutup (hanya akun yang sudah ada bisa masuk)
 };
