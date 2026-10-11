@@ -242,7 +242,7 @@ table.tbl{width:100%;border-collapse:collapse;font-size:13.5px;min-width:520px}
 /* ---------- gate (login/registrasi) ---------- */
 .gate{position:fixed;inset:0;z-index:80;overflow:auto;background:radial-gradient(900px 520px at 80% -10%,#1E3576 0%,transparent 60%),radial-gradient(700px 500px at -10% 110%,#13285E 0%,transparent 60%),var(--bg);
   padding:calc(24px + var(--safe-t)) 16px calc(24px + var(--safe-b));display:flex;justify-content:center;align-items:flex-start}
-@media (min-height:760px){.gate{align-items:center}}
+.gate>.gate-card{margin:auto 0}
 .gate-card{width:100%;max-width:430px;display:flex;flex-direction:column;gap:18px}
 .gate-brand{display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center}
 .gate-brand .moon{width:64px;height:64px;box-shadow:0 0 60px rgba(226,203,140,.45)}
@@ -515,6 +515,10 @@ code.k{overflow-wrap:anywhere;background:var(--bg);border:1px solid var(--line);
   .card{background:#fff;border-color:#bbb;color:#000;break-inside:avoid}
   .muted,.dim,.card h3{color:#444}
 }
+.gate-logo{width:140px;height:auto;border-radius:24px;box-shadow:0 18px 50px rgba(0,0,0,.35),0 0 0 1px rgba(226,203,140,.2)}
+.about-logo{width:120px;height:auto;border-radius:18px;box-shadow:0 0 0 1px rgba(226,203,140,.2)}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+@media (max-width:600px){.gate-logo{width:128px;border-radius:20px}}
 /* ---------- logo resmi (assets/logo) ---------- */
 .moon{background:url(assets/logo/luna-mark.svg) center/contain no-repeat!important;border-radius:0!important;box-shadow:none!important;overflow:visible!important;filter:drop-shadow(0 0 10px rgba(226,203,140,.35))}
 .moon::before,.moon::after{display:none!important}
@@ -573,7 +577,7 @@ code.k{overflow-wrap:anywhere;background:var(--bg);border:1px solid var(--line);
    ========================================================= */
 const CFG = Object.assign({supabaseUrl:"",supabaseKey:"",allowLocalAccounts:true,allowCloudSignup:true,appName:"Luna Money Tool"}, window.LUNA_CONFIG||{});
 const CLOUD = !!(CFG.supabaseUrl && CFG.supabaseKey);
-const APP_VERSION = "3.1.1";
+const APP_VERSION = "3.2.0";
 const DEVELOPER = "Luna Money Tool";
 const LUNA_MARK = `<span class="lm"><span class="moon"></span><span class="lm-t"><b>Luna</b><small>Money Tool</small></span></span>`;
 function creditHTML(){return `<footer class="credit"><span class="k">Dikembangkan oleh</span>${LUNA_MARK}<p>Luna Money Tool v${APP_VERSION}<br>© ${new Date().getFullYear()} ${DEVELOPER}. Hak cipta dilindungi.</p></footer>`}
@@ -912,7 +916,7 @@ const Gate = {
   view:"login", opts:{},
   show(view,opts={}){if(view==="unlock"&&!Object.keys(Auth.list()).length)view="login";this.view=view;this.opts=opts;document.body.classList.add("locked");const g=$("#gate");g.hidden=false;g.innerHTML=this.html();icons();this.bind();const f=g.querySelector("input:not([type=checkbox])");f&&setTimeout(()=>f.focus(),50)},
   pwField(id,label,ac){return `<div class="field"><label for="${id}">${label}</label><div class="pw-wrap"><input class="input" id="${id}" type="password" autocomplete="${ac}" required><button type="button" data-peek="${id}" aria-label="Tampilkan kata sandi"><i data-lucide="eye"></i></button></div></div>`},
-  brand(){return `<div class="gate-brand"><span class="moon"></span><h1>Luna</h1><p>Arus kas pribadi dan usaha Anda, terkunci dan hanya bisa dibuka oleh Anda.</p></div>`},
+  brand(){return `<div class="gate-brand"><img class="gate-logo" src="assets/logo/luna-logo-app.webp" alt="Luna Money Tool" width="480" height="495"><h1 class="sr-only">Luna Money Tool</h1><p>Arus kas pribadi dan usaha Anda, terkunci dan hanya bisa dibuka oleh Anda.</p></div>`},
   foot(){return `<div class="secure-note"><i data-lucide="shield-check" style="width:15px;height:15px"></i><span>Data di perangkat dienkripsi AES-256. ${CLOUD?"Akun cloud dilindungi email dan kata sandi.":""}</span></div>
     <button class="link" data-g="manual" style="align-self:center;display:inline-flex;gap:6px;align-items:center"><i data-lucide="book-open" style="width:16px;height:16px"></i>Baca manual penggunaan</button>
     <div class="gate-credit"><span>Dikembangkan oleh</span>${LUNA_MARK}<span style="letter-spacing:.04em;text-transform:none;font-weight:500">v${APP_VERSION} · © ${new Date().getFullYear()} ${DEVELOPER}</span></div>`},
@@ -1572,7 +1576,7 @@ function viewSettings(){
     </div>
   </div>
   <div class="card"><h3><i data-lucide="info"></i>Tentang aplikasi</h3>
-    <div class="about"><span class="lm lg"><span class="moon"></span><span class="lm-t"><b>Luna</b><small>Money Tool</small></span></span><dl class="kv" style="flex:1;min-width:220px"><dt>Aplikasi</dt><dd>Luna Money Tool</dd><dt>Versi</dt><dd>${APP_VERSION}</dd><dt>Pengembang</dt><dd>${DEVELOPER}</dd><dt>Hak cipta</dt><dd>© ${new Date().getFullYear()} ${DEVELOPER}</dd></dl></div>
+    <div class="about"><img class="about-logo" src="assets/logo/luna-logo-app.webp" alt="Logo Luna Money Tool" width="480" height="495"><dl class="kv" style="flex:1;min-width:220px"><dt>Aplikasi</dt><dd>Luna Money Tool</dd><dt>Versi</dt><dd>${APP_VERSION}</dd><dt>Pengembang</dt><dd>${DEVELOPER}</dd><dt>Hak cipta</dt><dd>© ${new Date().getFullYear()} ${DEVELOPER}</dd></dl></div>
   </div>`;
 }
 function afterSettings(){
@@ -1647,19 +1651,19 @@ const MANUAL=[
   s:["[1] Pilih <b>Kunci otomatis</b> 1 sampai 30 menit tidak dipakai.","[2] <b>Atur PIN 6 digit</b> untuk membuka Luna lebih cepat di perangkat ini.","[3] <b>Ganti kata sandi</b>.","[4] <b>Kunci sekarang</b> untuk mengunci seketika.","[5] <b>Keluar</b> dari akun. Pilih ini di perangkat bersama.","[6] Gulir ke bawah, isi <b>Saldo awal Pribadi</b>: total uang tunai, rekening, dan e-wallet pribadi saat mulai memakai Luna.","[7] Isi <b>Saldo awal Usaha</b> dengan cara yang sama untuk kas usaha.","[8] <b>Cadangan lengkap (.json)</b> menyimpan semua data. <b>Impor</b> untuk memasukkannya kembali atau memindahkan data dari Excel (CSV)."],
   warn:"File cadangan tidak terenkripsi. Simpan di tempat pribadi seperti Google Drive milik Anda sendiri."},
  {id:"langganan",t:"Langganan & pembayaran",i:"credit-card",
-  p:"Akun cloud Luna memakai sistem langganan. Pendaftar baru mendapat masa coba gratis, lalu memilih paket bulanan atau tahunan. Pembayaran diproses aman oleh Xendit.",
-  s:["Setelah link aktivasi email dibuka dan Anda masuk, <b>masa coba gratis</b> langsung berjalan (jika diaktifkan admin).","Saat masa coba atau langganan hampir habis, Beranda menampilkan pengingat dengan tombol <b>Perpanjang</b>. Bisa juga lewat <b>Akun & Pengaturan → Langganan → Perpanjang</b>.","Pilih paket, lalu ketuk <b>Bayar sekarang</b>. Anda diarahkan ke halaman pembayaran Xendit: pilih QRIS, Virtual Account, e-wallet (OVO, DANA, ShopeePay, LinkAja), atau kartu.","Setelah bayar, Anda kembali ke Luna. Halaman <b>Memeriksa pembayaran</b> lanjut otomatis begitu pembayaran terkonfirmasi, biasanya dalam hitungan detik.","Perpanjangan selalu ditambahkan setelah tanggal berakhir yang sekarang, jadi tidak ada hari yang hilang.","Punya <b>kode voucher</b>? Buka bagian <b>Punya kode voucher?</b> di halaman langganan, ketik kodenya, lalu ketuk <b>Pakai voucher</b>.","Jika admin mengaktifkan <b>transfer manual</b>, Anda bisa transfer ke rekening/QRIS admin lalu upload bukti. Langganan aktif setelah admin memverifikasi."],
+  p:"Akun cloud Luna memakai sistem langganan. Pendaftar baru mendapat masa coba gratis, lalu memilih paket bulanan atau tahunan. Pembayaran diproses aman oleh DOKU.",
+  s:["Setelah link aktivasi email dibuka dan Anda masuk, <b>masa coba gratis</b> langsung berjalan (jika diaktifkan admin).","Saat masa coba atau langganan hampir habis, Beranda menampilkan pengingat dengan tombol <b>Perpanjang</b>. Bisa juga lewat <b>Akun & Pengaturan → Langganan → Perpanjang</b>.","Pilih paket, lalu ketuk <b>Bayar sekarang</b>. Anda diarahkan ke halaman pembayaran DOKU: pilih QRIS, Virtual Account, e-wallet, kartu, atau gerai retail.","Setelah bayar, Anda kembali ke Luna. Halaman <b>Memeriksa pembayaran</b> lanjut otomatis begitu pembayaran terkonfirmasi, biasanya dalam hitungan detik.","Perpanjangan selalu ditambahkan setelah tanggal berakhir yang sekarang, jadi tidak ada hari yang hilang.","Punya <b>kode voucher</b>? Buka bagian <b>Punya kode voucher?</b> di halaman langganan, ketik kodenya, lalu ketuk <b>Pakai voucher</b>.","Jika admin mengaktifkan <b>transfer manual</b>, Anda bisa transfer ke rekening/QRIS admin lalu upload bukti. Langganan aktif setelah admin memverifikasi."],
   tip:"Jika langganan berakhir, data Anda tidak dihapus. Data tetap terenkripsi dan bisa dibuka lagi setelah perpanjang."},
  {id:"superadmin",t:"Super Admin",i:"shield-check",
   p:"Menu Super Admin hanya muncul untuk email yang terdaftar sebagai admin.",
-  s:["<b>Pembayaran</b>: pendapatan bulan ini, pembayaran Xendit yang lunas otomatis, dan transfer manual yang perlu diverifikasi (<b>Lihat bukti</b>, <b>Setujui</b>, <b>Tolak</b>).","<b>Pelanggan</b>: semua pendaftar dengan paket dan tanggal berakhir. <b>+ Bulan</b> menambah masa aktif, <b>Hentikan</b> mengakhiri langganan. Unduh daftar dalam CSV.","<b>Voucher</b>: buat kode sekali pakai 1–24 bulan untuk promo, hadiah, atau reseller. Kode yang belum dipakai bisa dicabut.","<b>Pengaturan</b>: ubah nama, durasi, dan harga paket, lama masa coba gratis, serta rekening/QRIS untuk transfer manual."],
+  s:["<b>Pembayaran</b>: pendapatan bulan ini, pembayaran DOKU yang lunas otomatis, dan transfer manual yang perlu diverifikasi (<b>Lihat bukti</b>, <b>Setujui</b>, <b>Tolak</b>).","<b>Pelanggan</b>: semua pendaftar dengan paket dan tanggal berakhir. <b>+ Bulan</b> menambah masa aktif, <b>Hentikan</b> mengakhiri langganan. Unduh daftar dalam CSV.","<b>Voucher</b>: buat kode sekali pakai 1–24 bulan untuk promo, hadiah, atau reseller. Kode yang belum dipakai bisa dicabut.","<b>Pengaturan</b>: ubah nama, durasi, dan harga paket, lama masa coba gratis, serta rekening/QRIS untuk transfer manual."],
   warn:"Harga yang ditagihkan ke pelanggan selalu dibaca server dari Pengaturan, bukan dari aplikasi pengguna, sehingga tidak bisa dimanipulasi."},
  {id:"pasang",t:"Pasang di HP seperti aplikasi",i:"smartphone",
   p:"Luna bisa dipasang di layar utama HP dan dibuka tanpa bilah browser.",
   s:["<b>Android (Chrome):</b> buka Luna, ketuk menu titik tiga, lalu pilih <b>Instal aplikasi</b> atau <b>Tambahkan ke layar utama</b>.","<b>iPhone (Safari):</b> buka Luna, ketuk tombol <b>Bagikan</b>, lalu pilih <b>Tambah ke Layar Utama</b>.","<b>Laptop (Chrome/Edge):</b> klik ikon Instal di ujung kanan kolom alamat."]},
 ];
 const FAQ=[
- ["Metode pembayaran apa saja yang bisa dipakai?","QRIS, Virtual Account (BCA, BNI, BRI, Mandiri, Permata, dan lainnya), e-wallet (OVO, DANA, ShopeePay, LinkAja), dan kartu kredit/debit, melalui Xendit."],
+ ["Metode pembayaran apa saja yang bisa dipakai?","QRIS, Virtual Account (BCA, BNI, BRI, Mandiri, Permata, dan lainnya), e-wallet (OVO, DANA, ShopeePay, LinkAja), kartu kredit/debit, serta Alfamart/Indomaret, melalui DOKU. Pilihan yang tampil mengikuti channel yang diaktifkan admin di DOKU."],
  ["Sudah bayar tapi langganan belum aktif.","Tunggu 1–2 menit lalu buka ulang Luna. Untuk Virtual Account, pastikan nominal dibayar persis. Jika masih belum aktif, hubungi admin dengan menyertakan email akun dan bukti bayar."],
  ["Apakah langganan diperpanjang otomatis?","Tidak. Luna tidak menyimpan data kartu atau rekening Anda. Anda memperpanjang sendiri saat ada pengingat, jadi tidak ada tagihan tak terduga."],
  ["Saya tidak menerima email aktivasi.","Cek folder Spam atau Promosi. Pastikan email yang diketik benar. Di halaman Aktifkan akun, ketuk Kirim ulang link aktivasi (bisa diulang setiap 1 menit). Link aktivasi berlaku 24 jam."],
@@ -1707,13 +1711,13 @@ function openManualOverlay(){
   $("#ov").addEventListener("click",e=>{if(e.target.id==="ov"||e.target.closest("[data-close]"))closeModal()});
 }
 
-/* ================= Langganan (subscription) + Xendit ================= */
+/* ================= Langganan (subscription) + DOKU ================= */
 const fmtCode=v=>{let s=String(v||"").toUpperCase().replace(/[^A-Z0-9]/g,"");if(s.startsWith("LUNA"))s=s.slice(4);s=s.slice(0,16);return s?"LUNA-"+s.match(/.{1,4}/g).join("-"):""};
 const waNum=p=>{let d=String(p||"").replace(/\D/g,"");if(d.startsWith("0"))d="62"+d.slice(1);return d};
 const fmtDT=s=>{if(!s)return "—";const d=new Date(s);return d.getDate()+" "+BLN3[d.getMonth()]+" "+d.getFullYear()+", "+pad(d.getHours())+":"+pad(d.getMinutes())};
 const fmtD=s=>{if(!s)return "—";const d=new Date(s);return d.getDate()+" "+BLN[d.getMonth()]+" "+d.getFullYear()};
 const SITE=()=>location.origin+location.pathname.replace(/index\.html$/,"");
-const PAYM={xendit:"Online (Xendit)",qris:"QRIS manual",transfer:"Transfer manual"};
+const PAYM={doku:"Online (DOKU)",qris:"QRIS manual",transfer:"Transfer manual"};
 function dbMissing(e){return e&&(e.code==="PGRST202"||e.code==="42883"||e.code==="PGRST205"||/Could not find the function|does not exist|schema cache/i.test(e.message||""))}
 Object.assign(Sync,{
   isAdmin:false, lic:null, pendingPay:0,
@@ -1734,11 +1738,13 @@ const Lic={
     gateway_not_configured:"Pembayaran online belum diaktifkan admin. Gunakan transfer manual atau hubungi admin.",
     gateway_error:"Payment gateway sedang bermasalah. Coba lagi beberapa menit lagi.",origin_not_allowed:"Alamat aplikasi ini belum didaftarkan untuk pembayaran. Hubungi admin.",
     forbidden:"Hanya super admin yang bisa melakukan ini.",invalid_plans:"Periksa paket: nama wajib diisi, durasi 1–36 bulan, harga lebih dari 0.",invalid_months:"Durasi harus 1–36 bulan.",
-    already_decided:"Pembayaran ini sudah diproses.",gateway_payment:"Pembayaran online diproses otomatis oleh Xendit."
+    already_decided:"Pembayaran ini sudah diproses.",gateway_payment:"Pembayaran online diproses otomatis oleh DOKU."
   })[m]||(/Failed to send a request|Failed to fetch|NetworkError/i.test(m)?"Layanan pembayaran tidak terjangkau. Periksa koneksi internet, atau hubungi admin.":dbMissing(e)?"Database langganan belum dipasang. Hubungi admin aplikasi.":m)},
   async show(email,opts={}){clearInterval(this.timer);this.box="#licBox";Gate.show("license",{email,...opts});await this.fill();this.startPoll()},
   startPoll(){clearInterval(this.timer);this.timer=setInterval(()=>{if(!$(this.box)){clearInterval(this.timer);return}if(this.returned||(this.pay&&this.pay.status==="pending"))this.check(true)},this.returned?4000:15000)},
   async check(quiet){
+    this.ticks=(this.ticks||0)+1;
+    if((this.returned||(this.pay&&this.pay.provider==="doku"&&this.pay.status==="pending"))&&(this.ticks===1||this.ticks%3===0)){try{await Sync.fn("doku-checkout",{action:"check"})}catch(e){}}
     try{const st=await Sync.license();if(st.activated){clearInterval(this.timer);Sync.lic=st;Sync.isAdmin=!!st.is_admin;await this.done(st);return true}}catch(e){}
     if(!quiet)await this.fill();else{const prev=this.pay&&this.pay.status;await this.loadPay();if(prev!==(this.pay&&this.pay.status))this.paint()}
     return false;
@@ -1772,11 +1778,11 @@ const Lic={
     const st=this.settings||{}, pay=this.pay, plans=this.plans(), sub=this.status||{};
     const monthly=(plans.find(p=>+p.months===1)||{}).price;
     let head="";
-    if(this.returned) head=`<div class="gate-banner wait"><i data-lucide="loader"></i><div><b>Memeriksa pembayaran…</b><span>Kami menunggu konfirmasi dari Xendit. Biasanya hanya beberapa detik. Halaman ini lanjut otomatis.</span></div></div>`;
+    if(this.returned) head=`<div class="gate-banner wait"><i data-lucide="loader"></i><div><b>Memeriksa pembayaran…</b><span>Kami menunggu konfirmasi dari DOKU. Biasanya hanya beberapa detik. Halaman ini lanjut otomatis.</span></div></div>`;
     else if(sub.expires_at&&!sub.activated) head=`<div class="gate-banner bad"><i data-lucide="calendar-x"></i><div><b>${sub.status==="trial"?"Masa coba gratis selesai":"Langganan berakhir"}</b><span>Berakhir ${fmtD(sub.expires_at)}. Data Anda tetap aman dan terenkripsi. Perpanjang untuk membuka dan menyinkronkannya lagi.</span></div></div>`;
     else if(sub.activated) head=`<div class="gate-banner ok"><i data-lucide="badge-check"></i><div><b>${sub.status==="trial"?"Masa coba gratis":"Langganan aktif"}</b><span>Aktif sampai ${fmtD(sub.expires_at)} (${sub.days_left} hari lagi). Perpanjangan ditambahkan setelah tanggal ini.</span></div></div>`;
     let pend="";
-    if(pay&&pay.status==="pending"&&pay.provider==="xendit") pend=`<div class="gate-banner wait"><i data-lucide="hourglass"></i><div><b>Menunggu pembayaran ${esc(pay.plan_name)} · ${rp(pay.amount)}</b><span>Tagihan berlaku sampai ${fmtDT(pay.expires_at)}. Sudah bayar? Status diperbarui otomatis.</span></div></div>
+    if(pay&&pay.status==="pending"&&pay.provider==="doku") pend=`<div class="gate-banner wait"><i data-lucide="hourglass"></i><div><b>Menunggu pembayaran ${esc(pay.plan_name)} · ${rp(pay.amount)}</b><span>Tagihan berlaku sampai ${fmtDT(pay.expires_at)}. Sudah bayar? Status diperbarui otomatis.</span></div></div>
       <a class="btn primary block" href="${esc(pay.invoice_url)}" rel="noopener"><i data-lucide="external-link"></i>Lanjutkan pembayaran</a>`;
     else if(pay&&pay.status==="pending"){const wa=waNum(st.admin_whatsapp);
       pend=`<div class="gate-banner wait"><i data-lucide="hourglass"></i><div><b>Bukti transfer menunggu verifikasi admin</b><span>${esc(pay.plan_name)} · ${rp(pay.amount)} via ${PAYM[pay.method]||pay.method}, dikirim ${fmtDT(pay.created_at)}. Halaman ini lanjut otomatis setelah disetujui.</span></div></div>
@@ -1792,8 +1798,8 @@ const Lic={
         <div class="row" style="justify-content:space-between"><b style="font-size:15px">Pilih paket</b>${st.trial_days&&!sub.expires_at?`<span class="pill moon">Coba gratis ${st.trial_days} hari</span>`:""}</div>
         ${cards}
         <button class="btn primary block" data-l="pay" ${sel?"":"disabled"}><i data-lucide="lock"></i>Bayar ${sel?rp(sel.price):""} sekarang</button>
-        <div class="pay-logos">QRIS · Virtual Account (BCA, BNI, BRI, Mandiri, Permata) · OVO · DANA · ShopeePay · LinkAja · Kartu kredit</div>
-        <p class="helptext" style="margin:0">Pembayaran diproses aman oleh <b>Xendit</b> (berizin Bank Indonesia). Luna tidak pernah melihat data kartu atau rekening Anda. Langganan aktif otomatis begitu pembayaran berhasil.</p>
+        <div class="pay-logos">QRIS · Virtual Account (BCA, Mandiri, BRI, BNI, Permata, dll.) · OVO · DANA · ShopeePay · LinkAja · Kartu · Alfamart/Indomaret</div>
+        <p class="helptext" style="margin:0">Pembayaran diproses aman oleh <b>DOKU</b> (berizin Bank Indonesia). Luna tidak pernah melihat data kartu atau rekening Anda. Langganan aktif otomatis begitu pembayaran berhasil.</p>
         <div class="err" id="lPayErr"></div>
       </div>
       ${manual}
@@ -1859,8 +1865,8 @@ const Lic={
   },
   async startPay(btn){
     const err=$("#lPayErr");err.textContent="";btn.disabled=true;const old=btn.innerHTML;btn.textContent="Membuat tagihan…";
-    try{const r=await Sync.fn("xendit-invoice",{plan_id:this.plan,return_path:location.pathname});
-      if(!r||!/^https:\/\/([a-z0-9-]+\.)*xendit\.co\//i.test(r.invoice_url||""))throw new Error("gateway_error");
+    try{const r=await Sync.fn("doku-checkout",{plan_id:this.plan,return_path:location.pathname});
+      if(!r||!/^https:\/\/([a-z0-9-]+\.)*doku\.com\//i.test(r.invoice_url||""))throw new Error("gateway_error");
       try{localStorage.setItem("luna.payEmail",Gate.opts.email||Auth.acc?.email||"")}catch(e){}
       location.href=r.invoice_url;
     }catch(x){err.textContent=this.errText(x);btn.disabled=false;btn.innerHTML=old;icons()}
@@ -1874,7 +1880,7 @@ const Lic={
   async afterReturn(ok){
     let email="";try{email=localStorage.getItem("luna.payEmail")||""}catch(e){}
     try{await Sync.ensure();const {data}=await Sync.client.auth.getSession();email=data.session?.user?.email||email;if(!data.session)throw 0}
-    catch(e){Gate.show("login",{email,banner:ok?{kind:"ok",title:"Pembayaran diterima",text:"Masuk dengan kata sandi Anda. Langganan aktif otomatis setelah Xendit mengonfirmasi pembayaran."}:{kind:"bad",title:"Pembayaran belum selesai",text:"Masuk lagi untuk mencoba pembayaran ulang."}});return}
+    catch(e){Gate.show("login",{email,banner:ok?{kind:"ok",title:"Pembayaran diterima",text:"Masuk dengan kata sandi Anda. Langganan aktif otomatis setelah DOKU mengonfirmasi pembayaran."}:{kind:"bad",title:"Pembayaran belum selesai",text:"Masuk lagi untuk mencoba pembayaran ulang."}});return}
     this.returned=!!ok;await this.show(email);
     if(ok)this.check(true);else toast("Pembayaran dibatalkan atau gagal. Silakan coba lagi.");
   },
@@ -1917,20 +1923,20 @@ const Admin={
     const ym=today().slice(0,7);const paid=this.pays.filter(p=>p.status==="approved");
     const month=paid.filter(p=>(p.paid_at||p.decided_at||p.created_at||"").slice(0,7)===ym);
     const sum=a=>a.reduce((s,p)=>s+(+p.amount||0),0);
-    return `<div class="stat-row"><div class="stat"><div class="t">Pendapatan bulan ini</div><div class="v num in">${rp(sum(month))}</div></div><div class="stat"><div class="t">Transaksi lunas bulan ini</div><div class="v num">${month.length}</div></div><div class="stat"><div class="t">Lewat Xendit</div><div class="v num">${month.filter(p=>p.provider==="xendit").length}</div></div><div class="stat"><div class="t">Perlu verifikasi</div><div class="v num ${cnt("pending")?"out":""}">${cnt("pending")}</div></div></div>
+    return `<div class="stat-row"><div class="stat"><div class="t">Pendapatan bulan ini</div><div class="v num in">${rp(sum(month))}</div></div><div class="stat"><div class="t">Transaksi lunas bulan ini</div><div class="v num">${month.length}</div></div><div class="stat"><div class="t">Lewat DOKU</div><div class="v num">${month.filter(p=>p.provider==="doku").length}</div></div><div class="stat"><div class="t">Perlu verifikasi</div><div class="v num ${cnt("pending")?"out":""}">${cnt("pending")}</div></div></div>
       <div class="seg" style="margin-bottom:12px">${[["pending","Perlu verifikasi"],["approved","Lunas"],["rejected","Ditolak"],["all","Semua"]].map(([k,l])=>`<button data-af="${k}" aria-pressed="${this.filter===k}">${l}${k!=="all"?` (${cnt(k)})`:""}</button>`).join("")}</div>
-      ${list.length?list.map(p=>{const stl={pending:p.provider==="xendit"?"Menunggu bayar":"Perlu verifikasi",approved:"Lunas",rejected:"Ditolak",expired:"Kedaluwarsa"}[p.status];
+      ${list.length?list.map(p=>{const stl={pending:p.provider==="doku"?"Menunggu bayar":"Perlu verifikasi",approved:"Lunas",rejected:"Ditolak",expired:"Kedaluwarsa"}[p.status];
         return `<div class="card adm-pay" data-pid="${p.id}">
         <div class="row" style="align-items:flex-start"><div style="min-width:0;flex:1"><b style="overflow-wrap:anywhere">${esc(p.email||"")}</b><div class="helptext">${esc(p.name||"")}${p.phone?" · "+esc(p.phone):""}</div></div>
-          <span class="pill ${p.provider==="xendit"?"moon":""}">${p.provider==="xendit"?"Xendit":"Manual"}</span><span class="pill ${p.status==="pending"?"warn":p.status==="approved"?"in":"out"}">${stl}</span></div>
-        <dl class="kv" style="margin-top:10px"><dt>Paket</dt><dd>${esc(p.plan_name)} (${p.months} bln)</dd><dt>Nominal</dt><dd class="num">${rp(p.amount)}</dd><dt>Metode</dt><dd>${p.provider==="xendit"?esc(p.paid_method?String(p.paid_method).replace(/_/g," "):"Online"):PAYM[p.method]}</dd>
+          <span class="pill ${p.provider==="doku"?"moon":""}">${p.provider==="doku"?"DOKU":"Manual"}</span><span class="pill ${p.status==="pending"?"warn":p.status==="approved"?"in":"out"}">${stl}</span></div>
+        <dl class="kv" style="margin-top:10px"><dt>Paket</dt><dd>${esc(p.plan_name)} (${p.months} bln)</dd><dt>Nominal</dt><dd class="num">${rp(p.amount)}</dd><dt>Metode</dt><dd>${p.provider==="doku"?esc(p.paid_method?String(p.paid_method).replace(/_/g," "):"Online"):PAYM[p.method]}</dd>
           ${p.provider==="manual"?`<dt>Pengirim</dt><dd>${esc(p.sender_name||"—")}</dd><dt>Tanggal bayar</dt><dd>${p.paid_on?fmtDateLong(p.paid_on):"—"}</dd>`:""}
           <dt>Dibuat</dt><dd>${fmtDT(p.created_at)}</dd>${p.paid_at?`<dt>Lunas</dt><dd>${fmtDT(p.paid_at)}</dd>`:""}${p.period_end?`<dt>Aktif s/d</dt><dd>${fmtD(p.period_end)}</dd>`:""}${p.note?`<dt>Catatan</dt><dd>${esc(p.note)}</dd>`:""}${p.admin_note?`<dt>Catatan admin</dt><dd>${esc(p.admin_note)}</dd>`:""}</dl>
         ${p.provider==="manual"?`<div class="row" style="margin-top:12px">
           <button class="btn sm" data-aa="proof"><i data-lucide="image"></i>Lihat bukti</button>
           ${isPend(p)?`<button class="btn sm primary" data-aa="approve"><i data-lucide="check"></i>Setujui</button><button class="btn sm danger" data-aa="reject"><i data-lucide="x"></i>Tolak</button>`:""}
           ${p.status==="approved"?`${p.phone?`<a class="btn sm" target="_blank" rel="noopener" href="${this.waLink(p)}"><i data-lucide="message-circle"></i>Kabari via WhatsApp</a>`:""}<a class="btn sm" href="${this.mailLink(p)}"><i data-lucide="mail"></i>Kabari via email</a>`:""}
-        </div>`:""}</div>`}).join(""):`<div class="card"><div class="empty"><b>${this.filter==="pending"?"Tidak ada yang perlu diverifikasi":"Belum ada pembayaran"}</b>Pembayaran Xendit tercatat dan mengaktifkan langganan otomatis. Transfer manual muncul di sini untuk diverifikasi.</div></div>`}`;
+        </div>`:""}</div>`}).join(""):`<div class="card"><div class="empty"><b>${this.filter==="pending"?"Tidak ada yang perlu diverifikasi":"Belum ada pembayaran"}</b>Pembayaran DOKU tercatat dan mengaktifkan langganan otomatis. Transfer manual muncul di sini untuk diverifikasi.</div></div>`}`;
   },
   subsHTML(){
     const now=Date.now();const act=s=>s.active;const trial=s=>s.active&&s.status==="trial";
@@ -1963,7 +1969,7 @@ const Admin={
     return `<div class="card"><h3><i data-lucide="tags"></i>Paket langganan</h3><form class="form" id="setForm">
       <div class="plan-ed">${plans.map((p,i)=>`<div class="plan-row" data-pi="${i}"><input class="input" data-pf="name" value="${esc(p.name||"")}" placeholder="Nama paket" aria-label="Nama paket"><select class="input" data-pf="months" aria-label="Durasi">${[1,3,6,12,24,36].map(m=>`<option value="${m}" ${+p.months===m?"selected":""}>${m} bulan</option>`).join("")}</select><input class="input num" data-pf="price" inputmode="numeric" value="${p.price?(+p.price).toLocaleString("id-ID"):""}" placeholder="Harga" aria-label="Harga"><button type="button" class="icon-btn" data-aa="delplan" aria-label="Hapus paket" ${plans.length<2?"disabled":""}><i data-lucide="trash-2"></i></button></div>`).join("")}</div>
       ${plans.length<6?`<button type="button" class="btn sm" data-aa="addplan"><i data-lucide="plus"></i>Tambah paket</button>`:""}
-      <div class="helptext">Harga dibaca server langsung dari sini saat membuat tagihan Xendit, jadi tidak bisa diubah dari aplikasi pengguna. Perubahan harga tidak memengaruhi tagihan yang sudah dibuat.</div>
+      <div class="helptext">Harga dibaca server langsung dari sini saat membuat tagihan DOKU, jadi tidak bisa diubah dari aplikasi pengguna. Perubahan harga tidak memengaruhi tagihan yang sudah dibuat.</div>
       <div class="field"><label for="sTrial">Masa coba gratis untuk pendaftar baru</label><select class="input" id="sTrial">${[0,3,7,14,30].map(d=>`<option value="${d}" ${+s.trial_days===d?"selected":""}>${d?d+" hari":"Tanpa masa coba"}</option>`).join("")}</select></div>
       <h3 style="margin-top:12px"><i data-lucide="landmark"></i>Transfer manual (cadangan)</h3>
       <label class="check"><input type="checkbox" id="sManual" ${s.manual_enabled?"checked":""}> Tampilkan opsi transfer manual / QRIS statis untuk pengguna</label>
@@ -1972,7 +1978,7 @@ const Admin={
       <div class="field"><label for="sNote">Catatan pembayaran</label><input class="input" id="sNote" value="${esc(s.payment_note||"")}" placeholder="cth: Cantumkan email Anda di berita transfer"></div>
       <div class="field"><label>Gambar QRIS statis</label><div class="row">${qris?`<img src="${esc(qris)}" alt="QRIS" style="width:120px;height:120px;object-fit:contain;background:#fff;border-radius:10px">`:""}<button type="button" class="btn sm" data-aa="qris"><i data-lucide="upload"></i>${qris?"Ganti QRIS":"Upload QRIS"}</button><span class="helptext" id="qrisNew"></span></div></div>
       <div class="err" id="setErr"></div><button class="btn primary">Simpan pengaturan</button></form></div>
-      <div class="card"><h3><i data-lucide="plug"></i>Status Xendit</h3><p class="helptext" style="margin:0">Kunci rahasia Xendit dan token webhook disimpan di Supabase → Edge Functions → Secrets, tidak pernah di aplikasi. Alamat webhook untuk Xendit Dashboard: <code class="k">${esc((CFG.supabaseUrl||"https://PROJECT.supabase.co").replace(/\/$/,""))}/functions/v1/xendit-webhook</code></p></div>`;
+      <div class="card"><h3><i data-lucide="plug"></i>Koneksi DOKU</h3><p class="helptext" style="margin:0">Client ID dan Secret Key DOKU disimpan di Supabase → Edge Functions → Secrets, tidak pernah di aplikasi. Notification URL untuk DOKU Dashboard: <code class="k">${esc((CFG.supabaseUrl||"https://PROJECT.supabase.co").replace(/\/$/,""))}/functions/v1/doku-notify</code></p></div>`;
   },
   readPlans(){return [...document.querySelectorAll(".plan-row")].map((r,i)=>{const o=this.plansDraft[i]||{};const name=r.querySelector('[data-pf="name"]').value.trim();
     const id=o.id||(name.toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"").slice(0,30)||"paket")+"-"+Math.random().toString(36).slice(2,6);

@@ -1,6 +1,6 @@
 -- =====================================================================
 -- Luna Money Tool — database cloud + sistem LANGGANAN (subscription)
--- Pembayaran utama: payment gateway Xendit (QRIS, Virtual Account, e-wallet, kartu) → lunas otomatis.
+-- Pembayaran utama: payment gateway DOKU Checkout (QRIS, Virtual Account, e-wallet, kartu, gerai) → lunas otomatis.
 -- Cadangan opsional: transfer manual yang diverifikasi super admin.
 -- Jalankan sekali di Supabase: SQL Editor → New query → tempel → Run.
 -- =====================================================================
@@ -55,8 +55,8 @@ create table if not exists public.luna_payments (
   plan_name   text not null,
   months      int  not null check (months between 1 and 36),
   plan_price  bigint not null,
-  provider    text not null default 'manual' check (provider in ('xendit','manual')),
-  method      text not null check (method in ('xendit','qris','transfer')),
+  provider    text not null default 'manual' check (provider in ('doku','manual')),
+  method      text not null check (method in ('doku','qris','transfer')),
   amount      bigint not null check (amount > 0),
   external_id text unique,
   invoice_id  text unique,
@@ -269,7 +269,7 @@ begin
            p.method, p.paid_method, p.amount, p.paid_on, p.sender_name, p.proof_path, p.note, p.status, p.admin_note,
            p.period_end, p.paid_at, p.created_at, p.decided_at
       from public.luna_payments p
-     where not (p.provider = 'xendit' and p.status in ('pending','expired') and p.created_at < now() - interval '7 days')
+     where not (p.provider = 'doku' and p.status in ('pending','expired') and p.created_at < now() - interval '7 days')
      order by (p.status = 'pending' and p.provider = 'manual') desc, p.created_at desc
      limit 500;
 end $$;
@@ -395,7 +395,7 @@ begin
    where id = 1;
 end $$;
 
--- ---------- Fungsi khusus server (Edge Function Xendit, memakai service role) ----------
+-- ---------- Fungsi khusus server (Edge Function DOKU, memakai service role) ----------
 create or replace function public.luna_gateway_paid(p_external_id text, p_invoice_id text, p_amount bigint, p_paid_method text)
 returns timestamptz
 language plpgsql volatile security definer set search_path = '' as $$
@@ -403,7 +403,7 @@ declare v_pay public.luna_payments; v_exp timestamptz;
 begin
   select * into v_pay from public.luna_payments where external_id = p_external_id for update;
   if v_pay.id is null then raise exception 'not_found'; end if;
-  if v_pay.provider <> 'xendit' then raise exception 'not_gateway'; end if;
+  if v_pay.provider <> 'doku' then raise exception 'not_gateway'; end if;
   if v_pay.invoice_id is distinct from p_invoice_id then raise exception 'invoice_mismatch'; end if;
   if p_amount < v_pay.plan_price then raise exception 'amount_mismatch'; end if;
   if v_pay.status = 'approved' then return v_pay.period_end; end if;  -- webhook dikirim ulang: aman
@@ -418,7 +418,7 @@ create or replace function public.luna_gateway_expired(p_external_id text) retur
 language plpgsql volatile security definer set search_path = '' as $$
 begin
   update public.luna_payments set status = 'expired', decided_at = now()
-   where external_id = p_external_id and provider = 'xendit' and status = 'pending';
+   where external_id = p_external_id and provider = 'doku' and status = 'pending';
 end $$;
 
 -- ---------- Hak menjalankan fungsi ----------

@@ -100,45 +100,46 @@ Yang dialami pengguna:
 
 ---
 
-## Langkah 2c — Langganan berbayar dengan Xendit
+## Langkah 2c — Langganan berbayar dengan DOKU
 
-Luna memakai **langganan**: pendaftar baru mendapat masa coba gratis, lalu membayar paket bulanan/tahunan. Pembayaran diproses **Xendit** (QRIS, Virtual Account, e-wallet, kartu) dan langganan aktif **otomatis** tanpa perlu admin.
+Luna memakai **langganan**: pendaftar baru mendapat masa coba gratis, lalu membayar paket bulanan/tahunan lewat **DOKU Checkout** (QRIS, Virtual Account, e-wallet, kartu, Alfamart/Indomaret). Langganan aktif **otomatis** tanpa perlu admin.
 
 ### Cara kerjanya (dan kenapa aman)
-1. Pengguna menekan **Bayar** → aplikasi memanggil Edge Function `xendit-invoice` di Supabase.
-2. Server mengambil **harga dari database** (bukan dari aplikasi), membuat tagihan di Xendit, lalu mengarahkan pengguna ke halaman bayar Xendit.
-3. Setelah bayar, Xendit memanggil `xendit-webhook`. Server memeriksa **token webhook**, lalu **menanyakan ulang status tagihan langsung ke API Xendit** sebelum memperpanjang langganan. Webhook palsu tidak berpengaruh, dan webhook yang terkirim dua kali tidak menambah masa aktif dua kali.
-4. Data cloud (tabel `luna_data`) dikunci RLS: hanya bisa dibaca/ditulis selama langganan aktif.
-5. Secret key Xendit hanya ada di **Supabase Secrets**, tidak pernah di `config.js` atau di browser.
+1. Pengguna menekan **Bayar** → aplikasi memanggil Edge Function `doku-checkout` di Supabase.
+2. Server mengambil **harga dari database** (bukan dari aplikasi), membuat tagihan di DOKU dengan tanda tangan HMAC-SHA256, lalu mengarahkan pengguna ke halaman bayar DOKU.
+3. Setelah bayar, DOKU mengirim notifikasi ke `doku-notify`. Server **memverifikasi Signature** DOKU (Client-Id, Request-Id, Request-Timestamp, Request-Target, Digest isi pesan), lalu **menanyakan ulang status ke Check Status API DOKU**, mencocokkan nomor invoice dan nominal, baru memperpanjang langganan. Notifikasi palsu ditolak, notifikasi ganda tidak menambah masa aktif dua kali.
+4. Jika notifikasi terlambat, aplikasi meminta server memeriksa status langsung ke DOKU saat pengguna kembali dari halaman bayar.
+5. Data cloud (tabel `luna_data`) dikunci RLS: hanya bisa dibaca/ditulis selama langganan aktif.
+6. **Client ID dan Secret Key DOKU hanya ada di Supabase Secrets**, tidak pernah di `config.js`, GitHub, atau browser.
 
 ### Langkah setup
-1. **Akun Xendit**: daftar di dashboard.xendit.co, lengkapi verifikasi bisnis. Selama menunggu, gunakan **Test Mode** untuk uji coba.
-2. **Secret API key**: Xendit Dashboard → **Settings → API Keys → Generate secret key**. Beri izin **Money-In: Write** (yang lain cukup None/Read).
-3. **Webhook**: Xendit Dashboard → **Settings → Webhooks** → bagian **Invoices paid** isi:
-   `https://PROJECT-ANDA.supabase.co/functions/v1/xendit-webhook`
-   Salin juga **Webhook verification token** di halaman yang sama.
-4. **Supabase → Edge Functions → Secrets**, tambahkan:
-   - `XENDIT_SECRET_KEY` = secret key dari langkah 2
-   - `XENDIT_CALLBACK_TOKEN` = webhook verification token dari langkah 3
+1. **DOKU Dashboard → Settings → API Keys** (dashboard.doku.com): salin **Client ID** (format `BRN-xxxx-xxxxxxxxxxxxx`) dan **Active Secret Key** (`SK-...`).
+   - Catatan: DOKU Checkout hanya memakai Client ID + Secret Key. *DOKU Public Key* dan *API key* lain tidak dibutuhkan untuk integrasi ini.
+2. **Supabase → Edge Functions → Secrets**, tambahkan:
+   - `DOKU_CLIENT_ID` = Client ID
+   - `DOKU_SECRET_KEY` = Active Secret Key
+   - `DOKU_ENV` = `production` (atau `sandbox` jika memakai kunci dari sandbox.doku.com)
    - `SITE_URLS` = alamat Luna, misalnya `https://money.domainanda.com` (pisahkan koma bila lebih dari satu)
+3. **Notification URL**: DOKU Dashboard → **Settings → Payment Settings / Notification** → isi untuk semua channel yang aktif:
+   `https://PROJECT-ANDA.supabase.co/functions/v1/doku-notify`
+4. **Aktifkan channel pembayaran** yang diinginkan di DOKU Dashboard (QRIS, VA, e-wallet, kartu, gerai). Hanya channel aktif yang tampil di halaman bayar.
 5. **Deploy Edge Functions** dari folder `supabase/functions/`:
    ```bash
-   supabase functions deploy xendit-invoice
-   supabase functions deploy xendit-webhook --no-verify-jwt
+   supabase functions deploy doku-checkout
+   supabase functions deploy doku-notify --no-verify-jwt
    ```
-   `xendit-webhook` memakai `--no-verify-jwt` karena dipanggil oleh Xendit; keamanannya dijaga token webhook + verifikasi ulang ke API Xendit.
-6. **Uji coba (Test Mode)**: daftar akun baru → bayar → di halaman Xendit test pilih metode dan selesaikan simulasi → Luna kembali dan langganan aktif. Cek menu **Super Admin → Pembayaran**.
-7. **Go live**: ganti `XENDIT_SECRET_KEY` dan `XENDIT_CALLBACK_TOKEN` ke kunci **Live Mode**, dan isi ulang URL webhook di Live Mode.
+   `doku-notify` memakai `--no-verify-jwt` karena dipanggil oleh DOKU; keamanannya dijaga verifikasi Signature + cek ulang status ke DOKU.
+6. **Uji coba**: sebaiknya pakai akun **sandbox** DOKU dulu (`DOKU_ENV=sandbox` + kunci sandbox), selesaikan simulasi pembayaran, lalu cek **Super Admin → Pembayaran**. Setelah lancar, ganti ke kunci production.
 
 ### Atur paket & harga
 Masuk dengan email super admin (`admin@baliekamediatama.com`) → **Super Admin → Pengaturan**: ubah nama paket, durasi, harga, dan lama masa coba gratis. Bawaan: Bulanan Rp49.000, Tahunan Rp399.000, coba gratis 7 hari.
 
 ### Cadangan: transfer manual & voucher
-- **Transfer manual** (opsional): centang di Pengaturan, isi rekening/QRIS statis. Pengguna upload bukti, admin menyetujui di **Pembayaran**. Berguna selama verifikasi Xendit belum selesai.
+- **Transfer manual** (opsional): centang di Pengaturan, isi rekening/QRIS statis. Pengguna upload bukti, admin menyetujui di **Pembayaran**.
 - **Voucher**: **Super Admin → Voucher** membuat kode sekali pakai (1–24 bulan) untuk promo, hadiah, atau reseller.
 
-### Biaya Xendit (perkiraan, cek halaman harga Xendit terbaru)
-QRIS ±0,7%, Virtual Account ±Rp4.000–4.500 per transaksi, e-wallet ±1,5–2%, kartu ±2,9% + Rp2.000. Tanpa biaya bulanan.
+### Keamanan kunci
+- Jangan pernah membagikan Secret Key lewat chat, email, atau menaruhnya di kode. Jika pernah terlanjur dibagikan, buat **Secret Key baru** di DOKU Dashboard dan perbarui `DOKU_SECRET_KEY` di Supabase.
 
 ---
 

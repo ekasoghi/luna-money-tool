@@ -7,5 +7,6 @@ Situs statis (tanpa build). Setiap perubahan yang di-push ke branch `main` otoma
 - Pengaturan pemilik: `config.js`
 - Panduan lengkap: `PANDUAN-HOSTING.md`
 - Database & langganan: `supabase.sql`
-- Pembayaran Xendit (Supabase Edge Functions): `supabase/functions/xendit-invoice`, `supabase/functions/xendit-webhook`
+- Pembayaran DOKU Checkout (Supabase Edge Functions): `supabase/functions/doku-checkout`, `supabase/functions/doku-notify`
+- Logo: `assets/logo/`
 - Saat merilis versi baru, naikkan `VERSION` di `sw.js`.
