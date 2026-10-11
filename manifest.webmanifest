@@ -1,7 +1,7 @@
 {
   "name": "Luna Money Tool",
   "short_name": "Luna Money",
-  "description": "Kelola arus kas pribadi dan usaha: scan nota, kategori otomatis, anggaran, laporan harian, bulanan, tahunan. Dikembangkan oleh Balieka Mediatama.",
+  "description": "Kelola arus kas pribadi dan usaha: scan nota, kategori otomatis, anggaran, laporan harian, bulanan, tahunan.",
   "lang": "id",
   "start_url": "./index.html",
   "scope": "./",
@@ -50,6 +50,6 @@
     }
   ],
   "developer": {
-    "name": "Balieka Mediatama"
+    "name": "Luna Money Tool"
   }
 }

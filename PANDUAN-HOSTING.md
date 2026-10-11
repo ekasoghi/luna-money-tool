@@ -100,6 +100,48 @@ Yang dialami pengguna:
 
 ---
 
+## Langkah 2c — Langganan berbayar dengan Xendit
+
+Luna memakai **langganan**: pendaftar baru mendapat masa coba gratis, lalu membayar paket bulanan/tahunan. Pembayaran diproses **Xendit** (QRIS, Virtual Account, e-wallet, kartu) dan langganan aktif **otomatis** tanpa perlu admin.
+
+### Cara kerjanya (dan kenapa aman)
+1. Pengguna menekan **Bayar** → aplikasi memanggil Edge Function `xendit-invoice` di Supabase.
+2. Server mengambil **harga dari database** (bukan dari aplikasi), membuat tagihan di Xendit, lalu mengarahkan pengguna ke halaman bayar Xendit.
+3. Setelah bayar, Xendit memanggil `xendit-webhook`. Server memeriksa **token webhook**, lalu **menanyakan ulang status tagihan langsung ke API Xendit** sebelum memperpanjang langganan. Webhook palsu tidak berpengaruh, dan webhook yang terkirim dua kali tidak menambah masa aktif dua kali.
+4. Data cloud (tabel `luna_data`) dikunci RLS: hanya bisa dibaca/ditulis selama langganan aktif.
+5. Secret key Xendit hanya ada di **Supabase Secrets**, tidak pernah di `config.js` atau di browser.
+
+### Langkah setup
+1. **Akun Xendit**: daftar di dashboard.xendit.co, lengkapi verifikasi bisnis. Selama menunggu, gunakan **Test Mode** untuk uji coba.
+2. **Secret API key**: Xendit Dashboard → **Settings → API Keys → Generate secret key**. Beri izin **Money-In: Write** (yang lain cukup None/Read).
+3. **Webhook**: Xendit Dashboard → **Settings → Webhooks** → bagian **Invoices paid** isi:
+   `https://PROJECT-ANDA.supabase.co/functions/v1/xendit-webhook`
+   Salin juga **Webhook verification token** di halaman yang sama.
+4. **Supabase → Edge Functions → Secrets**, tambahkan:
+   - `XENDIT_SECRET_KEY` = secret key dari langkah 2
+   - `XENDIT_CALLBACK_TOKEN` = webhook verification token dari langkah 3
+   - `SITE_URLS` = alamat Luna, misalnya `https://money.domainanda.com` (pisahkan koma bila lebih dari satu)
+5. **Deploy Edge Functions** dari folder `supabase/functions/`:
+   ```bash
+   supabase functions deploy xendit-invoice
+   supabase functions deploy xendit-webhook --no-verify-jwt
+   ```
+   `xendit-webhook` memakai `--no-verify-jwt` karena dipanggil oleh Xendit; keamanannya dijaga token webhook + verifikasi ulang ke API Xendit.
+6. **Uji coba (Test Mode)**: daftar akun baru → bayar → di halaman Xendit test pilih metode dan selesaikan simulasi → Luna kembali dan langganan aktif. Cek menu **Super Admin → Pembayaran**.
+7. **Go live**: ganti `XENDIT_SECRET_KEY` dan `XENDIT_CALLBACK_TOKEN` ke kunci **Live Mode**, dan isi ulang URL webhook di Live Mode.
+
+### Atur paket & harga
+Masuk dengan email super admin (`admin@baliekamediatama.com`) → **Super Admin → Pengaturan**: ubah nama paket, durasi, harga, dan lama masa coba gratis. Bawaan: Bulanan Rp49.000, Tahunan Rp399.000, coba gratis 7 hari.
+
+### Cadangan: transfer manual & voucher
+- **Transfer manual** (opsional): centang di Pengaturan, isi rekening/QRIS statis. Pengguna upload bukti, admin menyetujui di **Pembayaran**. Berguna selama verifikasi Xendit belum selesai.
+- **Voucher**: **Super Admin → Voucher** membuat kode sekali pakai (1–24 bulan) untuk promo, hadiah, atau reseller.
+
+### Biaya Xendit (perkiraan, cek halaman harga Xendit terbaru)
+QRIS ±0,7%, Virtual Account ±Rp4.000–4.500 per transaksi, e-wallet ±1,5–2%, kartu ±2,9% + Rp2.000. Tanpa biaya bulanan.
+
+---
+
 ## Langkah 3 — Upload
 
 ### Netlify (±5 menit)
