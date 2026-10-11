@@ -1,0 +1,4 @@
+# Luna Money Tool — situs statis, tidak ada proses build
+[build]
+  publish = "."
+  command = ""
