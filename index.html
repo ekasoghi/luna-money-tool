@@ -403,6 +403,37 @@ code.k{overflow-wrap:anywhere;background:var(--bg);border:1px solid var(--line);
   .menu-grid{grid-template-columns:repeat(2,1fr)}
 }
 
+/* ---------- manual ---------- */
+.manual{display:flex;flex-direction:column;gap:16px}
+.toc{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:8px}
+.toc button{display:flex;align-items:center;gap:10px;text-align:left;border:1px solid var(--line);background:var(--bg-2);border-radius:11px;padding:9px 11px;font-weight:600;font-size:13px;color:var(--fg)}
+.toc button:hover{border-color:var(--moon)}
+.toc .num,.step-no{width:24px;height:24px;border-radius:8px;display:grid;place-items:center;background:rgba(226,203,140,.14);color:var(--moon);font-size:12px;font-weight:700;flex:none}
+.man-sec{display:grid;grid-template-columns:1fr;gap:18px;align-items:start;scroll-margin-top:calc(140px + var(--safe-t))}
+@media (min-width:860px){.man-sec{grid-template-columns:minmax(0,1fr) 300px;scroll-margin-top:20px}.man-sec.is-wide{grid-template-columns:1fr}}
+.man-title{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.man-title h3{margin:0;font-family:var(--display);font-weight:400;font-size:22px;letter-spacing:0;text-transform:none;color:var(--fg)}
+.man-body p{margin:0 0 10px;color:var(--muted);max-width:68ch}
+.man-body ol{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:7px;max-width:68ch}
+.man-body li{padding-left:2px}
+.man-body li::marker{color:var(--moon);font-weight:700}
+.note{display:flex;gap:10px;align-items:flex-start;border-radius:11px;padding:10px 12px;margin-top:12px;font-size:13px;max-width:68ch}
+.note svg{width:17px;height:17px;flex:none;margin-top:1px}
+.note.tip{background:rgba(226,203,140,.08);border:1px solid rgba(226,203,140,.3)}.note.tip svg{color:var(--moon)}
+.note.warn{background:rgba(242,134,122,.08);border:1px solid rgba(242,134,122,.35)}.note.warn svg{color:var(--out)}
+.shot{margin:0;display:flex;flex-direction:column;align-items:center;gap:8px}
+.shot img{width:100%;max-width:280px;border-radius:22px;border:6px solid #050b1c;box-shadow:0 0 0 1px var(--line-2),0 18px 40px rgba(0,0,0,.45);background:#050b1c}
+.shot.wide img{max-width:100%;border-radius:12px;border-width:4px}
+.shot figcaption{font-size:12px;color:var(--dim);text-align:center;max-width:280px}
+.faq{border-bottom:1px solid rgba(36,57,107,.5);padding:10px 0}
+.faq summary{cursor:pointer;font-weight:600;list-style:none;display:flex;justify-content:space-between;gap:10px}
+.faq summary::after{content:"+";color:var(--moon);font-weight:700}
+.faq[open] summary::after{content:"−"}
+.faq p{margin:8px 0 0}
+.manual-overlay{z-index:95}
+.manual-sheet{max-width:880px}
+@media (max-width:600px){.man-title h3{font-size:19px}.toc{grid-template-columns:1fr 1fr}.toc button{font-size:12px;padding:8px}.shot img{max-width:240px}.manual-sheet .shot img{max-width:220px}}
+
 /* ---------- kredit pengembang ---------- */
 .credit{display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center;padding:26px 8px 6px;margin-top:8px;border-top:1px solid var(--line);color:var(--dim);font-size:11.5px}
 .credit .k{font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:700}
@@ -481,7 +512,7 @@ code.k{overflow-wrap:anywhere;background:var(--bg);border:1px solid var(--line);
    ========================================================= */
 const CFG = Object.assign({supabaseUrl:"",supabaseKey:"",allowLocalAccounts:true,allowCloudSignup:true,appName:"Luna Money Tool"}, window.LUNA_CONFIG||{});
 const CLOUD = !!(CFG.supabaseUrl && CFG.supabaseKey);
-const APP_VERSION = "2.2.0";
+const APP_VERSION = "2.3.0";
 const DEVELOPER = "Balieka Mediatama";
 function creditHTML(){return `<footer class="credit"><span class="k">Dikembangkan oleh</span><img class="screen-logo" src="assets/balieka-logo-light.png" alt="${DEVELOPER}" width="125" height="40"><img class="print-logo" src="assets/balieka-logo.png" alt="${DEVELOPER}" width="125" height="40"><p>Luna Money Tool v${APP_VERSION}<br>© ${new Date().getFullYear()} ${DEVELOPER}. Hak cipta dilindungi.</p></footer>`}
 const LOCAL_OK = CFG.allowLocalAccounts!==false || !CLOUD;
@@ -811,6 +842,7 @@ const Gate = {
   pwField(id,label,ac){return `<div class="field"><label for="${id}">${label}</label><div class="pw-wrap"><input class="input" id="${id}" type="password" autocomplete="${ac}" required><button type="button" data-peek="${id}" aria-label="Tampilkan kata sandi"><i data-lucide="eye"></i></button></div></div>`},
   brand(){return `<div class="gate-brand"><span class="moon"></span><h1>Luna</h1><p>Arus kas pribadi dan usaha Anda, terkunci dan hanya bisa dibuka oleh Anda.</p></div>`},
   foot(){return `<div class="secure-note"><i data-lucide="shield-check" style="width:15px;height:15px"></i><span>Data di perangkat dienkripsi AES-256. ${CLOUD?"Akun cloud dilindungi email dan kata sandi.":""}</span></div>
+    <button class="link" data-g="manual" style="align-self:center;display:inline-flex;gap:6px;align-items:center"><i data-lucide="book-open" style="width:16px;height:16px"></i>Baca manual penggunaan</button>
     <div class="gate-credit"><span>Dikembangkan oleh</span><img src="assets/balieka-logo-light.png" alt="${DEVELOPER}" width="94" height="30"><span style="letter-spacing:.04em;text-transform:none;font-weight:500">v${APP_VERSION} · © ${new Date().getFullYear()} ${DEVELOPER}</span></div>`},
   html(){
     const accs=Object.values(Auth.list()).sort((a,b)=>(b.lastLogin||0)-(a.lastLogin||0));
@@ -896,6 +928,7 @@ const Gate = {
       else if(a==="use-pw") this.show("unlock",{...this.opts,mode:"pw"});
       else if(a==="use-pin") this.show("unlock",{...this.opts,mode:"pin"});
       else if(a==="forgot") this.show("forgot",{email:b.dataset.email||$("#gEmail")?.value||this.opts.email||"",kind:b.dataset.kind});
+      else if(a==="manual") openManualOverlay();
       else if(a==="copy-code"){try{await navigator.clipboard.writeText(this.opts.code);toast("Kode disalin")}catch(err){toast("Salin manual kode di atas")}}
       else if(a==="enter"){ if(!$("#gSaved").checked){this.err("Centang dulu bahwa kode sudah disimpan.");return} const p=this.opts.pending; await Auth.open(p.acc,p.key); if(p.legacy){const n=await migrateLegacy();if(n){render();toast(`${n} transaksi lama dipindahkan ke akun Anda`)}} else toast("Selamat datang di Luna"); }
     };
@@ -1045,10 +1078,11 @@ const NAV=[
   {id:"report",n:"Laporan",i:"bar-chart-3"},
   {id:"insight",n:"Analisa",i:"sparkles"},
   {id:"settings",n:"Akun & Pengaturan",i:"settings"},
+  {id:"manual",n:"Manual",i:"book-open"},
 ];
 function renderNav(){
   $("#sideNav").innerHTML=NAV.map(n=>`<button data-view="${n.id}" ${state.view===n.id?'aria-current="page"':""}><i data-lucide="${n.i}"></i>${n.n}</button>`).join("");
-  const inMenu=["budget","insight","settings"].includes(state.view);
+  const inMenu=["budget","insight","settings","manual"].includes(state.view);
   $("#bottomNav").innerHTML=[NAV[0],NAV[1],null,NAV[3],"menu"].map(n=>n==="menu"?`<button data-act="menu" ${inMenu?'aria-current="page"':""}><i data-lucide="layout-grid"></i>Menu</button>`
     :n?`<button data-view="${n.id}" ${state.view===n.id?'aria-current="page"':""}><i data-lucide="${n.i}"></i>${n.n}</button>`
     :`<button class="scan" data-act="scan" aria-label="Scan atau upload nota"><span class="fab"><i data-lucide="scan-line"></i></span><em>Nota</em></button>`).join("");
@@ -1434,7 +1468,115 @@ function afterSettings(){
     i.addEventListener("change",()=>{const v=parseNum(i.value);state.profile.opening=state.profile.opening||{};state.profile.opening[b]=isNaN(v)?0:v;state.profile.updatedAt=Date.now();save();toast("Saldo awal disimpan")})});
 }
 
-const VIEWS={home:[viewHome,afterHome],tx:[viewTx,afterTx],budget:[viewBudget,afterBudget],report:[viewReport,afterReport],insight:[viewInsight,afterInsight],settings:[viewSettings,afterSettings]};
+/* ---------------- Manual book ---------------- */
+const MANUAL=[
+ {id:"kenal",t:"Mengenal Luna",i:"moon",img:"00-laptop",wide:true,cap:"Tampilan Luna di laptop: menu di kiri, ringkasan arus kas di tengah.",
+  p:"Luna Money Tool membantu Anda mencatat pemasukan dan pengeluaran pribadi maupun usaha, membaca nota secara otomatis, dan menyusun laporan arus kas harian, mingguan, bulanan, dan tahunan. Aplikasi ini bisa dipakai di HP dan laptop melalui browser.",
+  s:["<b>Buku Pribadi</b> untuk keuangan sehari-hari: listrik, air, belanja, makan, transportasi, dan lainnya.","<b>Buku Usaha</b> untuk penjualan, bahan baku, gaji karyawan, sewa, iklan, dan biaya usaha lainnya.","<b>Semua</b> menggabungkan kedua buku dalam satu tampilan.","Data Anda dienkripsi dan hanya bisa dibuka dengan kata sandi atau PIN Anda."]},
+ {id:"daftar",t:"Daftar akun baru",i:"user-plus",img:"01-daftar",cap:"Formulir pendaftaran.",
+  p:"Saat pertama membuka Luna, buat akun terlebih dahulu.",
+  s:["Pilih tab <b>Daftar</b>.","Isi <b>nama</b>, <b>email</b>, dan <b>kata sandi</b> (minimal 8 karakter, campuran huruf dan angka). Garis di bawah kolom kata sandi menunjukkan kekuatannya.","Ulangi kata sandi, centang persetujuan, lalu ketuk <b>Buat akun</b>."],
+  tip:"Jika pemilik aplikasi mengaktifkan akun cloud, Anda bisa memilih <b>Cloud</b> agar data tersinkron di HP dan laptop. Akun cloud perlu verifikasi lewat email."},
+ {id:"pemulihan",t:"Simpan kode pemulihan",i:"key-round",img:"02-kode",cap:"Kode pemulihan hanya tampil satu kali.",
+  p:"Setelah mendaftar akun perangkat, Luna menampilkan kode pemulihan 16 karakter.",
+  s:["Tulis kode di kertas atau simpan di aplikasi pengelola kata sandi.","Ketuk <b>Salin</b> jika ingin menyalinnya.","Centang <b>Saya sudah menyimpan kode pemulihan</b>, lalu ketuk <b>Lanjut ke Luna</b>."],
+  warn:"Kode ini satu-satunya cara membuka data jika Anda lupa kata sandi. Tanpa kode, data memang tidak bisa dibuka oleh siapa pun."},
+ {id:"masuk",t:"Masuk, PIN, dan kunci otomatis",i:"lock",img:"03-masuk",cap:"Membuka Luna dengan PIN 6 digit.",
+  p:"Setiap kali dibuka, Luna meminta kata sandi atau PIN. Aplikasi juga terkunci sendiri jika lama tidak dipakai.",
+  s:["Masukkan <b>kata sandi</b> lalu ketuk <b>Buka Luna</b>, atau ketik <b>PIN</b> jika sudah diatur. Luna terbuka otomatis setelah 6 angka.","Ketuk <b>Pakai kata sandi</b> untuk beralih dari PIN.","Ketuk <b>Lupa kata sandi?</b> untuk memulihkan akun dengan kode pemulihan (akun perangkat) atau tautan email (akun cloud)."],
+  tip:"Setelah 5 kali salah, Luna memberi jeda sebelum bisa mencoba lagi. PIN yang salah 5 kali akan dinonaktifkan."},
+ {id:"navigasi",t:"Navigasi dan menu",i:"layout-grid",img:"04-beranda",cap:"Beranda di HP: buku, periode, ringkasan, dan navigasi bawah.",
+  p:"Bagian atas layar dipakai untuk memilih buku dan periode. Bagian bawah untuk berpindah halaman.",
+  s:["Pilih <b>Pribadi</b>, <b>Usaha</b>, atau <b>Semua</b> di bagian atas.","Pilih periode <b>Harian</b>, <b>Mingguan</b>, <b>Bulanan</b>, atau <b>Tahunan</b>. Gunakan panah ‹ › untuk mundur atau maju.","Di HP, navigasi bawah berisi <b>Beranda</b>, <b>Transaksi</b>, <b>Nota</b>, <b>Laporan</b>, dan <b>Menu</b>.","Di laptop, semua menu ada di sisi kiri layar."]},
+ {id:"menu",t:"Menu lengkap",i:"layout-grid",img:"15-menu",cap:"Isi tombol Menu di HP.",
+  p:"Tombol <b>Menu</b> di kanan bawah membuka semua fitur yang tidak muat di navigasi bawah.",
+  s:["<b>Anggaran</b>, <b>Analisa</b>, <b>Akun & Pengaturan</b>, dan <b>Manual</b> (panduan ini).","Pintasan <b>Tambah Transaksi</b> dan <b>Upload dari Galeri</b>.","<b>Kunci Aplikasi</b> untuk mengunci Luna seketika, misalnya sebelum meminjamkan HP."]},
+ {id:"cepat",t:"Catat cepat",i:"pencil",img:"05-catat-cepat",cap:"Luna langsung menebak jenis, nominal, dan kategori.",
+  p:"Cara tercepat mencatat transaksi: ketik satu kalimat pendek di kartu <b>Catat cepat</b> di Beranda.",
+  s:["Ketik misalnya <code class=\"k\">makan siang 35rb</code>, <code class=\"k\">bensin 50rb</code>, atau <code class=\"k\">gaji 8,5jt</code>.","Tambahkan kata <code class=\"k\">kemarin</code> jika transaksinya kemarin.","Periksa tebakan Luna di bawah kolom, lalu ketuk tombol kirim."],
+  tip:"Kata seperti gaji, terima, jual, bonus, atau omzet otomatis dicatat sebagai pemasukan."},
+ {id:"form",t:"Tambah transaksi lengkap",i:"plus",img:"08-form",cap:"Formulir transaksi.",
+  p:"Gunakan formulir lengkap jika ingin mengisi toko, tanggal, metode bayar, atau melampirkan bukti.",
+  s:["Ketuk <b>Form lengkap</b> di Beranda, atau <b>Tambah Transaksi</b> di Menu.","Pilih <b>Pengeluaran</b> atau <b>Pemasukan</b>, isi nominal, toko, tanggal, dan catatan.","Pilih buku <b>Pribadi</b> atau <b>Usaha</b>. Kategori terpilih otomatis dari nama toko dan catatan; ketuk kategori lain jika perlu.","Pilih metode bayar, lampirkan foto bukti bila ada, lalu ketuk <b>Simpan</b>."]},
+ {id:"nota",t:"Scan atau upload nota",i:"scan-line",img:"06-sumber",cap:"Pilih kamera atau galeri.",
+  p:"Luna bisa membaca struk belanja, screenshot bukti transfer m-banking, bukti bayar QRIS, dan e-wallet.",
+  s:["Ketuk tombol <b>Nota</b> di tengah bawah (di laptop: <b>Scan / Upload Nota</b>).","Pilih <b>Foto nota</b> untuk membuka kamera, atau <b>Upload dari galeri</b> untuk memilih gambar yang sudah ada. Dari galeri Anda bisa memilih beberapa gambar sekaligus.","Di laptop, Anda juga bisa menyeret gambar ke jendela Luna atau menempel screenshot dengan <b>Ctrl+V</b>."],
+  tip:"Foto nota tegak lurus, terang, dan memenuhi layar agar terbaca lebih akurat. Pemakaian pertama butuh internet untuk mengunduh kamus bahasa Indonesia."},
+ {id:"hasil",t:"Periksa hasil scan",i:"check",img:"07-hasil-scan",cap:"Hasil pembacaan nota sebelum disimpan.",
+  p:"Setelah gambar dibaca, Luna mengisi formulir secara otomatis.",
+  s:["Periksa <b>nominal</b>, <b>tanggal</b>, <b>toko/penerima</b>, dan <b>metode bayar</b>. Koreksi jika ada yang keliru.","Bukti \"dana masuk\" otomatis dicatat sebagai pemasukan.","Ketuk <b>Simpan</b>. Jika Anda memilih beberapa gambar, Luna lanjut ke gambar berikutnya; ketuk <b>Lewati</b> untuk melompatinya."],
+  tip:"Gambar disimpan terenkripsi di perangkat sebagai bukti dan bisa dilihat lagi saat membuka transaksi."},
+ {id:"transaksi",t:"Daftar transaksi",i:"list",img:"09-transaksi",cap:"Transaksi dikelompokkan per tanggal.",
+  p:"Halaman Transaksi menampilkan semua catatan pada periode terpilih.",
+  s:["Cari dengan nama toko, catatan, atau nominal di kolom pencarian.","Saring berdasarkan jenis (pengeluaran/pemasukan) dan kategori.","Ketuk sebuah transaksi untuk mengubah atau menghapusnya. Untuk menghapus, ketuk <b>Hapus</b> dua kali."],
+  tip:"Jika Anda mengganti kategori sebuah toko, Luna mengingatnya. Transaksi berikutnya dari toko yang sama otomatis masuk kategori itu."},
+ {id:"anggaran",t:"Anggaran bulanan",i:"target",img:"13-anggaran",cap:"Batas bulanan per kategori dan pemakaiannya.",
+  p:"Tetapkan batas pengeluaran bulanan untuk setiap kategori.",
+  s:["Buka <b>Menu → Anggaran</b>.","Isi nominal di kolom kanan setiap kategori. Kosongkan jika tidak ingin dibatasi.","Ketuk <b>Saran dari rata-rata 3 bulan</b> agar Luna mengisinya otomatis.","Bar berubah kuning saat pemakaian 80% dan merah saat terlewati."],
+  tip:"Kartu <b>Sisa aman per hari</b> memberi tahu berapa yang masih boleh dibelanjakan setiap hari sampai akhir bulan."},
+ {id:"laporan",t:"Laporan arus kas",i:"bar-chart-3",img:"10-laporan",cap:"Laporan arus kas bulanan.",
+  p:"Menu Laporan menyusun arus kas sesuai periode yang Anda pilih.",
+  s:["Pilih <b>Harian</b>, <b>Mingguan</b>, <b>Bulanan</b>, atau <b>Tahunan</b>.","Empat kartu teratas menampilkan <b>saldo awal</b>, <b>kas masuk</b>, <b>kas keluar</b>, dan <b>saldo akhir</b>.","Grafik menunjukkan uang masuk dan keluar beserta garis saldo.","Laporan arus kas merinci pemasukan per sumber dan pengeluaran per kategori."]},
+ {id:"rincian",t:"Rincian, ekspor, dan cetak",i:"file-text",img:"11-rincian",cap:"Rincian per minggu dalam laporan bulanan.",
+  p:"Tabel rincian menyesuaikan periode: harian per transaksi, mingguan per hari, bulanan per minggu, tahunan per bulan.",
+  s:["Geser tabel ke samping di HP untuk melihat semua kolom.","Ketuk <b>CSV laporan</b> atau <b>CSV transaksi</b> untuk mengunduh file yang bisa dibuka di Excel atau Google Sheets.","Ketuk <b>Cetak / PDF</b> untuk mencetak atau menyimpan laporan sebagai PDF."],
+  tip:"Isi <b>saldo awal</b> di Akun & Pengaturan agar saldo di laporan sama dengan uang Anda sebenarnya."},
+ {id:"usaha",t:"Laporan usaha",i:"store",img:"12-usaha",cap:"Laba rugi dan arus kas per aktivitas untuk buku Usaha.",
+  p:"Saat buku <b>Usaha</b> dipilih, laporan menampilkan bagian khusus usaha.",
+  s:["<b>Arus kas per aktivitas</b>: operasi, investasi (pembelian peralatan), dan pendanaan (tambahan modal, prive).","<b>Laba Rugi</b>: pendapatan dikurangi HPP menjadi laba kotor, lalu dikurangi biaya operasional menjadi laba bersih.","Catat uang usaha yang dipakai untuk keperluan pribadi sebagai <b>Prive</b>, dan setoran modal sebagai <b>Tambahan Modal</b>, agar laba tetap akurat."]},
+ {id:"analisa",t:"Analisa Luna",i:"sparkles",img:"14-analisa",cap:"Temuan otomatis dari pola transaksi.",
+  p:"Luna membaca pola keuangan Anda dan menyampaikan temuan penting.",
+  s:["Perubahan pengeluaran dibanding periode lalu, dan kategori yang melonjak.","Proyeksi pengeluaran sampai akhir minggu atau bulan.","Pola 50/30/20: kebutuhan, keinginan, dan tabungan dibanding pemasukan.","Margin usaha, transaksi tidak biasa, dan pengeluaran rutin seperti langganan."]},
+ {id:"pengaturan",t:"Akun & pengaturan",i:"settings",img:"16-pengaturan",cap:"Halaman Akun & Pengaturan.",
+  p:"Atur keamanan, saldo awal, dan cadangan data di sini.",
+  s:["<b>Atur PIN 6 digit</b> untuk membuka Luna lebih cepat di perangkat ini.","Pilih <b>Kunci otomatis</b> 1 sampai 30 menit.","<b>Ganti kata sandi</b>, <b>Kunci sekarang</b>, atau <b>Keluar</b>. Pilih Keluar di perangkat bersama.","Isi <b>Saldo awal Pribadi</b> dan <b>Saldo awal Usaha</b>.","<b>Cadangan lengkap (.json)</b> untuk menyimpan semua data; <b>Impor</b> untuk memasukkannya kembali atau memindahkan dari Excel (CSV)."],
+  warn:"File cadangan tidak terenkripsi. Simpan di tempat pribadi seperti Google Drive milik Anda sendiri."},
+ {id:"pasang",t:"Pasang di HP seperti aplikasi",i:"smartphone",
+  p:"Luna bisa dipasang di layar utama HP dan dibuka tanpa bilah browser.",
+  s:["<b>Android (Chrome):</b> buka Luna, ketuk menu titik tiga, lalu pilih <b>Instal aplikasi</b> atau <b>Tambahkan ke layar utama</b>.","<b>iPhone (Safari):</b> buka Luna, ketuk tombol <b>Bagikan</b>, lalu pilih <b>Tambah ke Layar Utama</b>.","<b>Laptop (Chrome/Edge):</b> klik ikon Instal di ujung kanan kolom alamat."]},
+];
+const FAQ=[
+ ["Apakah data saya bisa dilihat orang lain?","Tidak. Data di perangkat dienkripsi dan hanya terbuka dengan kata sandi atau PIN Anda. Untuk akun cloud, setiap akun hanya bisa membaca datanya sendiri."],
+ ["Bagaimana jika saya lupa kata sandi?","Akun perangkat: pakai kode pemulihan di Lupa kata sandi. Akun cloud: minta tautan atur ulang lewat email."],
+ ["Kenapa data di HP dan laptop berbeda?","Akun perangkat menyimpan data di masing-masing perangkat. Gunakan akun cloud yang sama di keduanya, atau pindahkan data lewat Cadangan (.json) lalu Impor."],
+ ["Nominal nota salah terbaca. Apa yang harus dilakukan?","Koreksi angkanya di formulir sebelum menyimpan. Untuk hasil lebih baik, foto nota lebih terang, tegak, dan penuh layar."],
+ ["Kamera tidak mau terbuka.","Izinkan akses kamera untuk situs Luna di pengaturan browser, atau pakai Upload dari galeri."],
+ ["Apakah Luna bisa dipakai tanpa internet?","Bisa, setelah pernah dibuka sekali. Scan nota pertama kali dan sinkron cloud tetap butuh internet."],
+ ["Bagaimana menghapus data contoh?","Buka Akun & Pengaturan, lalu ketuk Hapus data contoh."],
+];
+function shot(name,cap,wide){return `<figure class="shot ${wide?"wide":""}"><img src="assets/manual/${name}.jpg" alt="${esc(cap)}" loading="lazy" decoding="async"><figcaption>${esc(cap)}</figcaption></figure>`}
+function manualHTML(){
+  return `<div class="manual">
+  <div class="manual-head"><div><h2 class="section-title">Manual Luna Money Tool</h2><p class="lede">Panduan langkah demi langkah memakai Luna di HP dan laptop. Ketuk judul di daftar isi untuk langsung ke bagiannya.</p></div></div>
+  <div class="search"><i data-lucide="search"></i><input class="input" id="manQ" placeholder="Cari di panduan, misalnya: PIN, scan, anggaran" aria-label="Cari di panduan"></div>
+  <nav class="toc" aria-label="Daftar isi">${MANUAL.map((m,i)=>`<button data-jump="man-${m.id}"><span class="num">${i+1}</span>${m.t}</button>`).join("")}<button data-jump="man-faq"><span class="num">?</span>Tanya jawab</button></nav>
+  ${MANUAL.map((m,i)=>`<section class="card man-sec ${m.wide?"is-wide":""}" id="man-${m.id}" data-text="${esc((m.t+" "+m.p+" "+m.s.join(" ")+" "+(m.tip||"")+" "+(m.warn||"")).replace(/<[^>]+>/g,"").toLowerCase())}">
+    <div class="man-body"><div class="man-title"><span class="step-no">${i+1}</span><h3>${m.t}</h3></div>
+      <p>${m.p}</p><ol>${m.s.map(x=>`<li>${x}</li>`).join("")}</ol>
+      ${m.tip?`<div class="note tip"><i data-lucide="lightbulb"></i><span>${m.tip}</span></div>`:""}
+      ${m.warn?`<div class="note warn"><i data-lucide="alert-triangle"></i><span>${m.warn}</span></div>`:""}</div>
+    ${m.img?shot(m.img,m.cap,m.wide):""}
+  </section>`).join("")}
+  <section class="card man-sec" id="man-faq" data-text="${esc(FAQ.flat().join(" ").toLowerCase())}"><div class="man-body"><div class="man-title"><span class="step-no">?</span><h3>Tanya jawab</h3></div>
+    ${FAQ.map(([q,a])=>`<details class="faq"><summary>${q}</summary><p>${a}</p></details>`).join("")}</div></section>
+  <div class="empty" id="manEmpty" hidden><b>Tidak ditemukan</b>Coba kata lain, misalnya "nota", "laporan", atau "kata sandi".</div>
+  </div>`;
+}
+function bindManual(root=document){
+  const q=$("#manQ",root);
+  q&&q.addEventListener("input",()=>{const v=q.value.trim().toLowerCase();let n=0;$$(".man-sec",root).forEach(s=>{const hit=!v||s.dataset.text.includes(v);s.hidden=!hit;if(hit)n++});$("#manEmpty",root).hidden=n>0;$(".toc",root).hidden=!!v});
+  root.addEventListener("click",e=>{const j=e.target.closest("[data-jump]");if(j){const el=document.getElementById(j.dataset.jump);el&&el.scrollIntoView({behavior:"smooth",block:"start"})}});
+}
+function viewManual(){return manualHTML()}
+function afterManual(){bindManual($("#view"))}
+function openManualOverlay(){
+  const root=$("#modalRoot"); root.onclick=null;
+  root.innerHTML=`<div class="overlay manual-overlay" id="ov"><div class="sheet manual-sheet"><div class="sheet-h"><h2>Manual</h2><button class="icon-btn" data-close aria-label="Tutup"><i data-lucide="x"></i></button></div>${manualHTML()}${creditHTML()}</div></div>`;
+  icons(); bindManual($("#ov"));
+  $("#ov").addEventListener("click",e=>{if(e.target.id==="ov"||e.target.closest("[data-close]"))closeModal()});
+}
+
+const VIEWS={manual:[viewManual,afterManual],home:[viewHome,afterHome],tx:[viewTx,afterTx],budget:[viewBudget,afterBudget],report:[viewReport,afterReport],insight:[viewInsight,afterInsight],settings:[viewSettings,afterSettings]};
 function render(){
   if(!Auth.key) return;
   renderNav();
@@ -1577,7 +1719,7 @@ function openForm(init={},opts={}){
 function openMenu(){
   const root=$("#modalRoot"); root.onclick=null;
   const items=[["view","home","layout-dashboard","Beranda"],["view","tx","list","Transaksi"],["view","report","bar-chart-3","Laporan Arus Kas"],
-    ["view","budget","target","Anggaran"],["view","insight","sparkles","Analisa"],["view","settings","settings","Akun & Pengaturan"],
+    ["view","budget","target","Anggaran"],["view","insight","sparkles","Analisa"],["view","settings","settings","Akun & Pengaturan"],["view","manual","book-open","Manual"],
     ["act","add","plus","Tambah Transaksi"],["act","gallery","images","Upload dari Galeri"],["act","lock","lock","Kunci Aplikasi"]];
   root.innerHTML=`<div class="overlay" id="ov"><div class="sheet"><div class="sheet-h"><h2>Menu</h2><button class="icon-btn" data-close aria-label="Tutup"><i data-lucide="x"></i></button></div>
     <div class="menu-grid">${items.map(([k,v,i,n])=>`<button data-m${k}="${v}" ${k==="view"&&state.view===v?'aria-current="page"':""}><i data-lucide="${i}"></i>${n}</button>`).join("")}</div>${creditHTML()}</div></div>`;
