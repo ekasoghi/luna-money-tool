@@ -7,6 +7,8 @@
 <meta name="description" content="Luna Money Tool — kelola arus kas pribadi dan usaha: pemasukan, pengeluaran, scan nota, anggaran, dan laporan harian, mingguan, bulanan, tahunan.">
 <meta name="theme-color" content="#0B1530">
 <meta name="referrer" content="strict-origin-when-cross-origin">
+<meta name="author" content="Balieka Mediatama">
+<meta name="application-name" content="Luna Money Tool">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Luna Money">
@@ -401,8 +403,25 @@ code.k{overflow-wrap:anywhere;background:var(--bg);border:1px solid var(--line);
   .menu-grid{grid-template-columns:repeat(2,1fr)}
 }
 
+/* ---------- kredit pengembang ---------- */
+.credit{display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center;padding:26px 8px 6px;margin-top:8px;border-top:1px solid var(--line);color:var(--dim);font-size:11.5px}
+.credit .k{font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:700}
+.credit img{height:48px;width:auto;display:block}
+.credit .print-logo{display:none}
+.credit p{margin:0;line-height:1.5}
+.side-credit{display:flex;flex-direction:column;gap:6px;padding:12px 6px 0;border-top:1px solid var(--line)}
+.side-credit span{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--dim);font-weight:700}
+.side-credit img{height:34px;width:auto;align-self:flex-start}
+.gate-credit{display:flex;flex-direction:column;align-items:center;gap:6px;margin-top:4px}
+.gate-credit span{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);font-weight:700}
+.gate-credit img{height:38px;width:auto}
+.about{display:flex;gap:16px;align-items:center;flex-wrap:wrap}
+.about img{height:44px;width:auto}
+@media (max-width:600px){.credit{padding-top:20px}.credit img{height:42px}}
+
 @media print{
   body{background:#fff;color:#000}
+  .credit{border-color:#bbb;color:#444}.credit .screen-logo{display:none}.credit .print-logo{display:block}
   .side,.bottom,.topbar,.no-print,.toast,.gate{display:none!important}
   .main{padding:0}
   .card{background:#fff;border-color:#bbb;color:#000;break-inside:avoid}
@@ -422,6 +441,7 @@ code.k{overflow-wrap:anywhere;background:var(--bg);border:1px solid var(--line);
     <div class="foot">
       <button class="btn sm ghost" data-act="lock"><i data-lucide="lock"></i>Kunci aplikasi</button>
       <span><span class="sync-dot" id="syncDot"></span> <span id="syncText">Terenkripsi di perangkat</span></span>
+      <div class="side-credit"><span>Dikembangkan oleh</span><img src="assets/balieka-logo-light.png" alt="Balieka Mediatama"></div>
     </div>
   </aside>
   <main class="main">
@@ -461,6 +481,9 @@ code.k{overflow-wrap:anywhere;background:var(--bg);border:1px solid var(--line);
    ========================================================= */
 const CFG = Object.assign({supabaseUrl:"",supabaseKey:"",allowLocalAccounts:true,allowCloudSignup:true,appName:"Luna Money Tool"}, window.LUNA_CONFIG||{});
 const CLOUD = !!(CFG.supabaseUrl && CFG.supabaseKey);
+const APP_VERSION = "2.2.0";
+const DEVELOPER = "Balieka Mediatama";
+function creditHTML(){return `<footer class="credit"><span class="k">Dikembangkan oleh</span><img class="screen-logo" src="assets/balieka-logo-light.png" alt="${DEVELOPER}" width="125" height="40"><img class="print-logo" src="assets/balieka-logo.png" alt="${DEVELOPER}" width="125" height="40"><p>Luna Money Tool v${APP_VERSION}<br>© ${new Date().getFullYear()} ${DEVELOPER}. Hak cipta dilindungi.</p></footer>`}
 const LOCAL_OK = CFG.allowLocalAccounts!==false || !CLOUD;
 
 /* ---------------- Kategori ---------------- */
@@ -787,7 +810,8 @@ const Gate = {
   show(view,opts={}){if(view==="unlock"&&!Object.keys(Auth.list()).length)view="login";this.view=view;this.opts=opts;document.body.classList.add("locked");const g=$("#gate");g.hidden=false;g.innerHTML=this.html();icons();this.bind();const f=g.querySelector("input:not([type=checkbox])");f&&setTimeout(()=>f.focus(),50)},
   pwField(id,label,ac){return `<div class="field"><label for="${id}">${label}</label><div class="pw-wrap"><input class="input" id="${id}" type="password" autocomplete="${ac}" required><button type="button" data-peek="${id}" aria-label="Tampilkan kata sandi"><i data-lucide="eye"></i></button></div></div>`},
   brand(){return `<div class="gate-brand"><span class="moon"></span><h1>Luna</h1><p>Arus kas pribadi dan usaha Anda, terkunci dan hanya bisa dibuka oleh Anda.</p></div>`},
-  foot(){return `<div class="secure-note"><i data-lucide="shield-check" style="width:15px;height:15px"></i><span>Data di perangkat dienkripsi AES-256. ${CLOUD?"Akun cloud dilindungi email dan kata sandi.":""}</span></div>`},
+  foot(){return `<div class="secure-note"><i data-lucide="shield-check" style="width:15px;height:15px"></i><span>Data di perangkat dienkripsi AES-256. ${CLOUD?"Akun cloud dilindungi email dan kata sandi.":""}</span></div>
+    <div class="gate-credit"><span>Dikembangkan oleh</span><img src="assets/balieka-logo-light.png" alt="${DEVELOPER}" width="94" height="30"><span style="letter-spacing:.04em;text-transform:none;font-weight:500">v${APP_VERSION} · © ${new Date().getFullYear()} ${DEVELOPER}</span></div>`},
   html(){
     const accs=Object.values(Auth.list()).sort((a,b)=>(b.lastLogin||0)-(a.lastLogin||0));
     const v=this.view,o=this.opts;
@@ -1397,6 +1421,9 @@ function viewSettings(){
     <div class="card"><h3><i data-lucide="sparkles"></i>Aturan kategori yang dipelajari</h3>
       ${rules.length?`<div class="rule-list">${rules.map(([k,v])=>`<div><span><b>${esc(k)}</b> → ${esc(CAT[v]?.n||v)}</span><button class="icon-btn" style="width:30px;height:30px" data-rule="${esc(k)}" aria-label="Hapus aturan"><i data-lucide="x"></i></button></div>`).join("")}</div>`:`<div class="helptext">Belum ada. Saat Anda mengganti kategori hasil otomatis, Luna menyimpan aturannya di sini.</div>`}
     </div>
+  </div>
+  <div class="card"><h3><i data-lucide="info"></i>Tentang aplikasi</h3>
+    <div class="about"><img src="assets/balieka-logo-light.png" alt="${DEVELOPER}" width="137" height="44"><dl class="kv" style="flex:1;min-width:220px"><dt>Aplikasi</dt><dd>Luna Money Tool</dd><dt>Versi</dt><dd>${APP_VERSION}</dd><dt>Pengembang</dt><dd>${DEVELOPER}</dd><dt>Hak cipta</dt><dd>© ${new Date().getFullYear()} ${DEVELOPER}</dd></dl></div>
   </div>`;
 }
 function afterSettings(){
@@ -1413,7 +1440,7 @@ function render(){
   renderNav();
   Object.keys(charts).forEach(k=>{charts[k].destroy();delete charts[k]});
   const [v,after]=VIEWS[state.view]||VIEWS.home;
-  $("#view").innerHTML=`<div class="wrap" style="padding:0">${v()}</div>`;
+  $("#view").innerHTML=`<div class="wrap" style="padding:0">${v()}${creditHTML()}</div>`;
   icons(); try{after&&after()}catch(e){console.error(e)}
 }
 
@@ -1553,7 +1580,7 @@ function openMenu(){
     ["view","budget","target","Anggaran"],["view","insight","sparkles","Analisa"],["view","settings","settings","Akun & Pengaturan"],
     ["act","add","plus","Tambah Transaksi"],["act","gallery","images","Upload dari Galeri"],["act","lock","lock","Kunci Aplikasi"]];
   root.innerHTML=`<div class="overlay" id="ov"><div class="sheet"><div class="sheet-h"><h2>Menu</h2><button class="icon-btn" data-close aria-label="Tutup"><i data-lucide="x"></i></button></div>
-    <div class="menu-grid">${items.map(([k,v,i,n])=>`<button data-m${k}="${v}" ${k==="view"&&state.view===v?'aria-current="page"':""}><i data-lucide="${i}"></i>${n}</button>`).join("")}</div></div></div>`;
+    <div class="menu-grid">${items.map(([k,v,i,n])=>`<button data-m${k}="${v}" ${k==="view"&&state.view===v?'aria-current="page"':""}><i data-lucide="${i}"></i>${n}</button>`).join("")}</div>${creditHTML()}</div></div>`;
   icons();
   $("#ov").addEventListener("click",e=>{
     if(e.target.id==="ov"||e.target.closest("[data-close]")){closeModal();return}
@@ -1684,7 +1711,7 @@ const csvEsc=v=>{if(typeof v==="number")return String(v);v=String(v??"");if(/^[=
 function toCSV(list){const head="tanggal,jenis,nominal,kategori,buku,toko,catatan,metode";return head+"\n"+list.sort((a,b)=>a.d.localeCompare(b.d)).map(t=>[t.d,t.t==="in"?"masuk":"keluar",t.a,CAT[t.c]?.n||t.c,t.b==="business"?"usaha":"pribadi",t.m,t.n,t.p].map(csvEsc).join(",")).join("\n")}
 function cashCSV(){
   const r=range(state.mode,state.anchor);const rows=cashRows(r);const t=totals(txIn(r));const open=balanceBefore(r.start);
-  const L=[["Laporan Arus Kas Luna Money Tool"],["Periode",r.label+(r.sub?" ("+r.sub+")":"")],["Buku",{personal:"Pribadi",business:"Usaha",all:"Semua"}[state.book]],[],
+  const L=[["Laporan Arus Kas Luna Money Tool"],["Dikembangkan oleh",DEVELOPER],["Periode",r.label+(r.sub?" ("+r.sub+")":"")],["Buku",{personal:"Pribadi",business:"Usaha",all:"Semua"}[state.book]],[],
     state.mode==="day"?["Keterangan","Kategori","Masuk","Keluar","Saldo"]:["Periode","Rentang","Saldo awal","Masuk","Keluar","Bersih","Saldo akhir"]];
   rows.forEach(x=>L.push(state.mode==="day"?[x.label,x.sub,x.in,x.out,x.close]:[x.label,x.sub||(x.start===x.end?x.start:x.start+" s/d "+x.end),x.open,x.in,x.out,x.in-x.out,x.close]));
   L.push([],["Saldo awal",open],["Total masuk",t.in],["Total keluar",t.out],["Arus kas bersih",t.net],["Saldo akhir",open+t.net]);

@@ -1,7 +1,7 @@
 {
   "name": "Luna Money Tool",
   "short_name": "Luna Money",
-  "description": "Kelola arus kas pribadi dan usaha: scan nota, kategori otomatis, anggaran, laporan harian, bulanan, tahunan.",
+  "description": "Kelola arus kas pribadi dan usaha: scan nota, kategori otomatis, anggaran, laporan harian, bulanan, tahunan. Dikembangkan oleh Balieka Mediatama.",
   "lang": "id",
   "start_url": "./index.html",
   "scope": "./",
@@ -10,12 +10,46 @@
   "background_color": "#0A1430",
   "theme_color": "#0B1530",
   "icons": [
-    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
-    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png" },
-    { "src": "icons/maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+    {
+      "src": "icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "icons/maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
   ],
   "shortcuts": [
-    { "name": "Scan Nota", "url": "./index.html#home", "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }] },
-    { "name": "Laporan", "url": "./index.html#report", "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }] }
-  ]
+    {
+      "name": "Scan Nota",
+      "url": "./index.html#home",
+      "icons": [
+        {
+          "src": "icons/icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "Laporan",
+      "url": "./index.html#report",
+      "icons": [
+        {
+          "src": "icons/icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
+    }
+  ],
+  "developer": {
+    "name": "Balieka Mediatama"
+  }
 }
