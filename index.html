@@ -432,6 +432,15 @@ code.k{overflow-wrap:anywhere;background:var(--bg);border:1px solid var(--line);
 .faq p{margin:8px 0 0}
 .manual-overlay{z-index:95}
 .manual-sheet{max-width:880px}
+.mk{display:inline-grid;place-items:center;width:20px;height:20px;border-radius:50%;background:var(--moon);color:var(--moon-ink);font-size:11.5px;font-weight:800;margin-right:6px;vertical-align:1px;flex:none}
+.man-sec.multi{grid-template-columns:1fr}
+.shots{display:flex;flex-wrap:wrap;gap:18px;justify-content:center}
+.shots .shot{flex:0 1 260px}
+.man-body ol{list-style:none;padding-left:0}
+.man-body ol li{display:flex;align-items:flex-start;gap:10px;padding-left:0}
+.man-body ol li>.mk{margin:1px 0 0}
+.man-body ol li>span:last-child{min-width:0}
+.mk.dot{width:7px;height:7px;background:var(--line-2);margin:8px 7px 0 6px!important}
 @media (max-width:600px){.man-title h3{font-size:19px}.toc{grid-template-columns:1fr 1fr}.toc button{font-size:12px;padding:8px}.shot img{max-width:240px}.manual-sheet .shot img{max-width:220px}}
 
 /* ---------- kredit pengembang ---------- */
@@ -512,7 +521,7 @@ code.k{overflow-wrap:anywhere;background:var(--bg);border:1px solid var(--line);
    ========================================================= */
 const CFG = Object.assign({supabaseUrl:"",supabaseKey:"",allowLocalAccounts:true,allowCloudSignup:true,appName:"Luna Money Tool"}, window.LUNA_CONFIG||{});
 const CLOUD = !!(CFG.supabaseUrl && CFG.supabaseKey);
-const APP_VERSION = "2.3.0";
+const APP_VERSION = "2.4.0";
 const DEVELOPER = "Balieka Mediatama";
 function creditHTML(){return `<footer class="credit"><span class="k">Dikembangkan oleh</span><img class="screen-logo" src="assets/balieka-logo-light.png" alt="${DEVELOPER}" width="125" height="40"><img class="print-logo" src="assets/balieka-logo.png" alt="${DEVELOPER}" width="125" height="40"><p>Luna Money Tool v${APP_VERSION}<br>© ${new Date().getFullYear()} ${DEVELOPER}. Hak cipta dilindungi.</p></footer>`}
 const LOCAL_OK = CFG.allowLocalAccounts!==false || !CLOUD;
@@ -1473,63 +1482,63 @@ const MANUAL=[
  {id:"kenal",t:"Mengenal Luna",i:"moon",img:"00-laptop",wide:true,cap:"Tampilan Luna di laptop: menu di kiri, ringkasan arus kas di tengah.",
   p:"Luna Money Tool membantu Anda mencatat pemasukan dan pengeluaran pribadi maupun usaha, membaca nota secara otomatis, dan menyusun laporan arus kas harian, mingguan, bulanan, dan tahunan. Aplikasi ini bisa dipakai di HP dan laptop melalui browser.",
   s:["<b>Buku Pribadi</b> untuk keuangan sehari-hari: listrik, air, belanja, makan, transportasi, dan lainnya.","<b>Buku Usaha</b> untuk penjualan, bahan baku, gaji karyawan, sewa, iklan, dan biaya usaha lainnya.","<b>Semua</b> menggabungkan kedua buku dalam satu tampilan.","Data Anda dienkripsi dan hanya bisa dibuka dengan kata sandi atau PIN Anda."]},
- {id:"daftar",t:"Daftar akun baru",i:"user-plus",img:"01-daftar",cap:"Formulir pendaftaran.",
+ {id:"daftar",t:"Daftar akun baru",i:"user-plus",img:"01-daftar",cap:"Formulir pendaftaran. Angka pada gambar sesuai nomor langkah.",
   p:"Saat pertama membuka Luna, buat akun terlebih dahulu.",
-  s:["Pilih tab <b>Daftar</b>.","Isi <b>nama</b>, <b>email</b>, dan <b>kata sandi</b> (minimal 8 karakter, campuran huruf dan angka). Garis di bawah kolom kata sandi menunjukkan kekuatannya.","Ulangi kata sandi, centang persetujuan, lalu ketuk <b>Buat akun</b>."],
+  s:["[1] Pilih tab <b>Daftar</b>.","[2] Isi <b>nama</b> dan <b>email</b> Anda.","[3] Buat <b>kata sandi</b> minimal 8 karakter, campuran huruf dan angka. Garis di bawahnya menunjukkan kekuatan sandi. Ulangi kata sandi di kolom berikutnya.","[4] Centang persetujuan.","[5] Ketuk <b>Buat akun</b>."],
   tip:"Jika pemilik aplikasi mengaktifkan akun cloud, Anda bisa memilih <b>Cloud</b> agar data tersinkron di HP dan laptop. Akun cloud perlu verifikasi lewat email."},
  {id:"pemulihan",t:"Simpan kode pemulihan",i:"key-round",img:"02-kode",cap:"Kode pemulihan hanya tampil satu kali.",
   p:"Setelah mendaftar akun perangkat, Luna menampilkan kode pemulihan 16 karakter.",
-  s:["Tulis kode di kertas atau simpan di aplikasi pengelola kata sandi.","Ketuk <b>Salin</b> jika ingin menyalinnya.","Centang <b>Saya sudah menyimpan kode pemulihan</b>, lalu ketuk <b>Lanjut ke Luna</b>."],
+  s:["[1] Tulis kode ini di kertas atau simpan di aplikasi pengelola kata sandi.","[2] Ketuk <b>Salin</b> jika ingin menyalinnya.","[3] Centang <b>Saya sudah menyimpan kode pemulihan di tempat aman</b>.","[4] Ketuk <b>Lanjut ke Luna</b>."],
   warn:"Kode ini satu-satunya cara membuka data jika Anda lupa kata sandi. Tanpa kode, data memang tidak bisa dibuka oleh siapa pun."},
  {id:"masuk",t:"Masuk, PIN, dan kunci otomatis",i:"lock",img:"03-masuk",cap:"Membuka Luna dengan PIN 6 digit.",
   p:"Setiap kali dibuka, Luna meminta kata sandi atau PIN. Aplikasi juga terkunci sendiri jika lama tidak dipakai.",
-  s:["Masukkan <b>kata sandi</b> lalu ketuk <b>Buka Luna</b>, atau ketik <b>PIN</b> jika sudah diatur. Luna terbuka otomatis setelah 6 angka.","Ketuk <b>Pakai kata sandi</b> untuk beralih dari PIN.","Ketuk <b>Lupa kata sandi?</b> untuk memulihkan akun dengan kode pemulihan (akun perangkat) atau tautan email (akun cloud)."],
-  tip:"Setelah 5 kali salah, Luna memberi jeda sebelum bisa mencoba lagi. PIN yang salah 5 kali akan dinonaktifkan."},
- {id:"navigasi",t:"Navigasi dan menu",i:"layout-grid",img:"04-beranda",cap:"Beranda di HP: buku, periode, ringkasan, dan navigasi bawah.",
+  s:["[1] Ketik <b>PIN</b> 6 angka. Luna terbuka otomatis setelah angka keenam. Jika belum mengatur PIN, isi kata sandi lalu ketuk <b>Buka Luna</b>.","[2] Ketuk <b>Pakai kata sandi</b> untuk beralih dari PIN ke kata sandi.","[3] Ketuk <b>Lupa kata sandi?</b> untuk memulihkan akun dengan kode pemulihan (akun perangkat) atau tautan email (akun cloud)."],
+  tip:"Setelah 5 kali salah, Luna memberi jeda sebelum bisa mencoba lagi. PIN yang salah 5 kali otomatis dinonaktifkan."},
+ {id:"navigasi",t:"Navigasi dan menu",i:"layout-grid",img:"04-beranda",cap:"Beranda di HP.",
   p:"Bagian atas layar dipakai untuk memilih buku dan periode. Bagian bawah untuk berpindah halaman.",
-  s:["Pilih <b>Pribadi</b>, <b>Usaha</b>, atau <b>Semua</b> di bagian atas.","Pilih periode <b>Harian</b>, <b>Mingguan</b>, <b>Bulanan</b>, atau <b>Tahunan</b>. Gunakan panah ‹ › untuk mundur atau maju.","Di HP, navigasi bawah berisi <b>Beranda</b>, <b>Transaksi</b>, <b>Nota</b>, <b>Laporan</b>, dan <b>Menu</b>.","Di laptop, semua menu ada di sisi kiri layar."]},
+  s:["[1] Pilih buku <b>Pribadi</b>, <b>Usaha</b>, atau <b>Semua</b>.","[2] Pilih periode <b>Harian</b>, <b>Mingguan</b>, <b>Bulanan</b>, atau <b>Tahunan</b>.","[3] Ketuk panah ‹ › untuk mundur atau maju ke periode lain.","[4] Kartu ringkasan menampilkan arus kas bersih, saldo saat ini, pemasukan, dan pengeluaran periode terpilih.","[5] Tombol <b>Nota</b> untuk memotret atau mengupload nota.","[6] Tombol <b>Menu</b> membuka semua fitur lain. Di laptop, semua menu ada di sisi kiri layar."]},
  {id:"menu",t:"Menu lengkap",i:"layout-grid",img:"15-menu",cap:"Isi tombol Menu di HP.",
   p:"Tombol <b>Menu</b> di kanan bawah membuka semua fitur yang tidak muat di navigasi bawah.",
   s:["<b>Anggaran</b>, <b>Analisa</b>, <b>Akun & Pengaturan</b>, dan <b>Manual</b> (panduan ini).","Pintasan <b>Tambah Transaksi</b> dan <b>Upload dari Galeri</b>.","<b>Kunci Aplikasi</b> untuk mengunci Luna seketika, misalnya sebelum meminjamkan HP."]},
  {id:"cepat",t:"Catat cepat",i:"pencil",img:"05-catat-cepat",cap:"Luna langsung menebak jenis, nominal, dan kategori.",
   p:"Cara tercepat mencatat transaksi: ketik satu kalimat pendek di kartu <b>Catat cepat</b> di Beranda.",
-  s:["Ketik misalnya <code class=\"k\">makan siang 35rb</code>, <code class=\"k\">bensin 50rb</code>, atau <code class=\"k\">gaji 8,5jt</code>.","Tambahkan kata <code class=\"k\">kemarin</code> jika transaksinya kemarin.","Periksa tebakan Luna di bawah kolom, lalu ketuk tombol kirim."],
+  s:["[1] Ketik misalnya <code class=\"k\">makan siang 35rb</code>, <code class=\"k\">bensin 50rb</code>, atau <code class=\"k\">gaji 8,5jt</code>. Tambahkan kata <code class=\"k\">kemarin</code> jika transaksinya kemarin.","[2] Periksa tebakan Luna (jenis, nominal, kategori), lalu ketuk tombol kirim di sebelah kanan kolom.","[3] Atau pakai tombol <b>Foto nota</b>, <b>Dari galeri</b>, dan <b>Form lengkap</b> untuk cara lain."],
   tip:"Kata seperti gaji, terima, jual, bonus, atau omzet otomatis dicatat sebagai pemasukan."},
- {id:"form",t:"Tambah transaksi lengkap",i:"plus",img:"08-form",cap:"Formulir transaksi.",
-  p:"Gunakan formulir lengkap jika ingin mengisi toko, tanggal, metode bayar, atau melampirkan bukti.",
-  s:["Ketuk <b>Form lengkap</b> di Beranda, atau <b>Tambah Transaksi</b> di Menu.","Pilih <b>Pengeluaran</b> atau <b>Pemasukan</b>, isi nominal, toko, tanggal, dan catatan.","Pilih buku <b>Pribadi</b> atau <b>Usaha</b>. Kategori terpilih otomatis dari nama toko dan catatan; ketuk kategori lain jika perlu.","Pilih metode bayar, lampirkan foto bukti bila ada, lalu ketuk <b>Simpan</b>."]},
+ {id:"form",t:"Tambah transaksi lengkap",i:"plus",img:["08-form","08b-kategori"],cap:["Bagian atas formulir.","Bagian bawah: kategori dan metode bayar."],
+  p:"Gunakan formulir lengkap jika ingin mengisi toko, tanggal, metode bayar, atau melampirkan bukti. Buka lewat <b>Form lengkap</b> di Beranda atau <b>Tambah Transaksi</b> di Menu.",
+  s:["[1] Pilih <b>Pengeluaran</b> atau <b>Pemasukan</b>.","[2] Isi <b>nominal</b>. Titik pemisah ribuan muncul otomatis.","[3] Isi nama <b>toko atau pihak</b>, misalnya PLN, Indomaret, atau nama pelanggan.","[4] Atur <b>tanggal</b> jika bukan hari ini. Isi catatan bila perlu.","[5] Pilih buku <b>Pribadi</b> atau <b>Usaha</b>.","[6] Gulir ke bawah. Label <b>dipilih otomatis</b> berarti Luna sudah memilih kategori.","[7] Kategori terpilih ditandai garis emas. Ketuk kategori lain jika kurang tepat.","[8] Pilih <b>metode bayar</b>, lampirkan foto bukti bila ada, lalu ketuk <b>Simpan</b>."]},
  {id:"nota",t:"Scan atau upload nota",i:"scan-line",img:"06-sumber",cap:"Pilih kamera atau galeri.",
-  p:"Luna bisa membaca struk belanja, screenshot bukti transfer m-banking, bukti bayar QRIS, dan e-wallet.",
-  s:["Ketuk tombol <b>Nota</b> di tengah bawah (di laptop: <b>Scan / Upload Nota</b>).","Pilih <b>Foto nota</b> untuk membuka kamera, atau <b>Upload dari galeri</b> untuk memilih gambar yang sudah ada. Dari galeri Anda bisa memilih beberapa gambar sekaligus.","Di laptop, Anda juga bisa menyeret gambar ke jendela Luna atau menempel screenshot dengan <b>Ctrl+V</b>."],
+  p:"Luna bisa membaca struk belanja, screenshot bukti transfer m-banking, bukti bayar QRIS, dan e-wallet. Ketuk tombol <b>Nota</b> di tengah bawah (di laptop: <b>Scan / Upload Nota</b>).",
+  s:["[1] <b>Foto nota</b> membuka kamera untuk memotret struk.","[2] <b>Upload dari galeri</b> untuk memilih foto nota atau screenshot bukti bayar yang sudah ada. Anda bisa memilih beberapa gambar sekaligus.","[3] <b>Isi manual tanpa gambar</b> jika tidak punya bukti.","Di laptop, Anda juga bisa menyeret gambar ke jendela Luna atau menempel screenshot dengan <b>Ctrl+V</b>."],
   tip:"Foto nota tegak lurus, terang, dan memenuhi layar agar terbaca lebih akurat. Pemakaian pertama butuh internet untuk mengunduh kamus bahasa Indonesia."},
- {id:"hasil",t:"Periksa hasil scan",i:"check",img:"07-hasil-scan",cap:"Hasil pembacaan nota sebelum disimpan.",
+ {id:"hasil",t:"Periksa hasil scan",i:"check",img:["07-hasil-scan","07b-lampiran"],cap:["Hasil pembacaan bukti transfer.","Gambar tersimpan sebagai bukti."],
   p:"Setelah gambar dibaca, Luna mengisi formulir secara otomatis.",
-  s:["Periksa <b>nominal</b>, <b>tanggal</b>, <b>toko/penerima</b>, dan <b>metode bayar</b>. Koreksi jika ada yang keliru.","Bukti \"dana masuk\" otomatis dicatat sebagai pemasukan.","Ketuk <b>Simpan</b>. Jika Anda memilih beberapa gambar, Luna lanjut ke gambar berikutnya; ketuk <b>Lewati</b> untuk melompatinya."],
-  tip:"Gambar disimpan terenkripsi di perangkat sebagai bukti dan bisa dilihat lagi saat membuka transaksi."},
+  s:["[1] Ringkasan di bagian atas menyebutkan apa yang terbaca: toko atau penerima, total, dan tanggal.","[2] Periksa <b>nominal</b> dan koreksi jika keliru.","[3] Periksa nama <b>toko atau penerima</b>. Bukti \"dana masuk\" otomatis dicatat sebagai pemasukan.","[4] Gulir ke bawah: gambar terlampir sebagai bukti.","[5] Metode bayar sudah terisi otomatis.","[6] Ketuk <b>Simpan</b>. Jika Anda memilih beberapa gambar, Luna lanjut ke gambar berikutnya; ketuk <b>Lewati</b> untuk melompatinya."],
+  tip:"Gambar disimpan terenkripsi di perangkat dan bisa dilihat lagi saat membuka transaksinya."},
  {id:"transaksi",t:"Daftar transaksi",i:"list",img:"09-transaksi",cap:"Transaksi dikelompokkan per tanggal.",
   p:"Halaman Transaksi menampilkan semua catatan pada periode terpilih.",
-  s:["Cari dengan nama toko, catatan, atau nominal di kolom pencarian.","Saring berdasarkan jenis (pengeluaran/pemasukan) dan kategori.","Ketuk sebuah transaksi untuk mengubah atau menghapusnya. Untuk menghapus, ketuk <b>Hapus</b> dua kali."],
+  s:["[1] Cari dengan nama toko, catatan, atau nominal.","[2] Saring berdasarkan jenis: pengeluaran atau pemasukan.","[3] Saring berdasarkan kategori.","[4] Ringkasan jumlah transaksi, uang masuk, keluar, dan bersih sesuai saringan.","[5] Ketuk sebuah transaksi untuk mengubah atau menghapusnya. Untuk menghapus, ketuk <b>Hapus</b> dua kali."],
   tip:"Jika Anda mengganti kategori sebuah toko, Luna mengingatnya. Transaksi berikutnya dari toko yang sama otomatis masuk kategori itu."},
  {id:"anggaran",t:"Anggaran bulanan",i:"target",img:"13-anggaran",cap:"Batas bulanan per kategori dan pemakaiannya.",
-  p:"Tetapkan batas pengeluaran bulanan untuk setiap kategori.",
-  s:["Buka <b>Menu → Anggaran</b>.","Isi nominal di kolom kanan setiap kategori. Kosongkan jika tidak ingin dibatasi.","Ketuk <b>Saran dari rata-rata 3 bulan</b> agar Luna mengisinya otomatis.","Bar berubah kuning saat pemakaian 80% dan merah saat terlewati."],
-  tip:"Kartu <b>Sisa aman per hari</b> memberi tahu berapa yang masih boleh dibelanjakan setiap hari sampai akhir bulan."},
- {id:"laporan",t:"Laporan arus kas",i:"bar-chart-3",img:"10-laporan",cap:"Laporan arus kas bulanan.",
-  p:"Menu Laporan menyusun arus kas sesuai periode yang Anda pilih.",
-  s:["Pilih <b>Harian</b>, <b>Mingguan</b>, <b>Bulanan</b>, atau <b>Tahunan</b>.","Empat kartu teratas menampilkan <b>saldo awal</b>, <b>kas masuk</b>, <b>kas keluar</b>, dan <b>saldo akhir</b>.","Grafik menunjukkan uang masuk dan keluar beserta garis saldo.","Laporan arus kas merinci pemasukan per sumber dan pengeluaran per kategori."]},
+  p:"Tetapkan batas pengeluaran bulanan untuk setiap kategori. Buka lewat <b>Menu → Anggaran</b>.",
+  s:["[1] Ketuk <b>Saran dari rata-rata 3 bulan</b> agar Luna mengisi semua batas otomatis.","[2] Atau isi batas sendiri di kolom kanan setiap kategori. Kosongkan jika tidak ingin dibatasi.","[3] Bar pemakaian berubah kuning saat terpakai 80% dan merah saat terlewati."],
+  tip:"Kartu <b>Sisa aman per hari</b> di atas menunjukkan berapa yang masih boleh dibelanjakan setiap hari sampai akhir bulan."},
+ {id:"laporan",t:"Laporan arus kas",i:"bar-chart-3",img:["10-laporan","10b-arus-kas"],cap:["Bagian atas Laporan.","Laporan arus kas: saldo awal sampai saldo akhir."],
+  p:"Menu Laporan menyusun arus kas sesuai buku dan periode yang Anda pilih.",
+  s:["[1] Tombol ekspor: <b>CSV laporan</b>, <b>CSV transaksi</b>, dan <b>Cetak / PDF</b>. Geser ke samping untuk melihat semuanya.","[2] Pilih laporan <b>Harian</b>, <b>Mingguan</b>, <b>Bulanan</b>, atau <b>Tahunan</b>.","[3] Ketuk panah untuk melihat periode sebelumnya atau berikutnya.","[4] Empat kartu menampilkan <b>saldo awal</b>, <b>kas masuk</b>, <b>kas keluar</b>, dan <b>saldo akhir</b>.","Di bawahnya ada grafik masuk dan keluar dengan garis saldo, lalu laporan arus kas yang merinci pemasukan per sumber dan pengeluaran per kategori."]},
  {id:"rincian",t:"Rincian, ekspor, dan cetak",i:"file-text",img:"11-rincian",cap:"Rincian per minggu dalam laporan bulanan.",
   p:"Tabel rincian menyesuaikan periode: harian per transaksi, mingguan per hari, bulanan per minggu, tahunan per bulan.",
-  s:["Geser tabel ke samping di HP untuk melihat semua kolom.","Ketuk <b>CSV laporan</b> atau <b>CSV transaksi</b> untuk mengunduh file yang bisa dibuka di Excel atau Google Sheets.","Ketuk <b>Cetak / PDF</b> untuk mencetak atau menyimpan laporan sebagai PDF."],
+  s:["Geser tabel ke samping di HP untuk melihat semua kolom: saldo awal, masuk, keluar, bersih, dan saldo akhir.","Ketuk <b>CSV laporan</b> atau <b>CSV transaksi</b> di atas halaman untuk mengunduh file yang bisa dibuka di Excel atau Google Sheets.","Ketuk <b>Cetak / PDF</b> untuk mencetak atau menyimpan laporan sebagai PDF."],
   tip:"Isi <b>saldo awal</b> di Akun & Pengaturan agar saldo di laporan sama dengan uang Anda sebenarnya."},
- {id:"usaha",t:"Laporan usaha",i:"store",img:"12-usaha",cap:"Laba rugi dan arus kas per aktivitas untuk buku Usaha.",
+ {id:"usaha",t:"Laporan usaha",i:"store",img:"12-usaha",cap:"Laba rugi buku Usaha.",
   p:"Saat buku <b>Usaha</b> dipilih, laporan menampilkan bagian khusus usaha.",
   s:["<b>Arus kas per aktivitas</b>: operasi, investasi (pembelian peralatan), dan pendanaan (tambahan modal, prive).","<b>Laba Rugi</b>: pendapatan dikurangi HPP menjadi laba kotor, lalu dikurangi biaya operasional menjadi laba bersih.","Catat uang usaha yang dipakai untuk keperluan pribadi sebagai <b>Prive</b>, dan setoran modal sebagai <b>Tambahan Modal</b>, agar laba tetap akurat."]},
  {id:"analisa",t:"Analisa Luna",i:"sparkles",img:"14-analisa",cap:"Temuan otomatis dari pola transaksi.",
-  p:"Luna membaca pola keuangan Anda dan menyampaikan temuan penting.",
+  p:"Luna membaca pola keuangan Anda dan menyampaikan temuan penting. Buka lewat <b>Menu → Analisa</b>.",
   s:["Perubahan pengeluaran dibanding periode lalu, dan kategori yang melonjak.","Proyeksi pengeluaran sampai akhir minggu atau bulan.","Pola 50/30/20: kebutuhan, keinginan, dan tabungan dibanding pemasukan.","Margin usaha, transaksi tidak biasa, dan pengeluaran rutin seperti langganan."]},
- {id:"pengaturan",t:"Akun & pengaturan",i:"settings",img:"16-pengaturan",cap:"Halaman Akun & Pengaturan.",
-  p:"Atur keamanan, saldo awal, dan cadangan data di sini.",
-  s:["<b>Atur PIN 6 digit</b> untuk membuka Luna lebih cepat di perangkat ini.","Pilih <b>Kunci otomatis</b> 1 sampai 30 menit.","<b>Ganti kata sandi</b>, <b>Kunci sekarang</b>, atau <b>Keluar</b>. Pilih Keluar di perangkat bersama.","Isi <b>Saldo awal Pribadi</b> dan <b>Saldo awal Usaha</b>.","<b>Cadangan lengkap (.json)</b> untuk menyimpan semua data; <b>Impor</b> untuk memasukkannya kembali atau memindahkan dari Excel (CSV)."],
+ {id:"pengaturan",t:"Akun & pengaturan",i:"settings",img:["16-pengaturan","16b-saldo-awal"],cap:["Keamanan akun.","Saldo awal dan cadangan data."],
+  p:"Atur keamanan, saldo awal, dan cadangan data. Buka lewat <b>Menu → Akun & Pengaturan</b> atau ikon akun di kanan atas.",
+  s:["[1] Pilih <b>Kunci otomatis</b> 1 sampai 30 menit tidak dipakai.","[2] <b>Atur PIN 6 digit</b> untuk membuka Luna lebih cepat di perangkat ini.","[3] <b>Ganti kata sandi</b>.","[4] <b>Kunci sekarang</b> untuk mengunci seketika.","[5] <b>Keluar</b> dari akun. Pilih ini di perangkat bersama.","[6] Gulir ke bawah, isi <b>Saldo awal Pribadi</b>: total uang tunai, rekening, dan e-wallet pribadi saat mulai memakai Luna.","[7] Isi <b>Saldo awal Usaha</b> dengan cara yang sama untuk kas usaha.","[8] <b>Cadangan lengkap (.json)</b> menyimpan semua data. <b>Impor</b> untuk memasukkannya kembali atau memindahkan data dari Excel (CSV)."],
   warn:"File cadangan tidak terenkripsi. Simpan di tempat pribadi seperti Google Drive milik Anda sendiri."},
  {id:"pasang",t:"Pasang di HP seperti aplikasi",i:"smartphone",
   p:"Luna bisa dipasang di layar utama HP dan dibuka tanpa bilah browser.",
@@ -1545,17 +1554,20 @@ const FAQ=[
  ["Bagaimana menghapus data contoh?","Buka Akun & Pengaturan, lalu ketuk Hapus data contoh."],
 ];
 function shot(name,cap,wide){return `<figure class="shot ${wide?"wide":""}"><img src="assets/manual/${name}.jpg" alt="${esc(cap)}" loading="lazy" decoding="async"><figcaption>${esc(cap)}</figcaption></figure>`}
+const mk=x=>x.replace(/\[(\d)\]/g,'<span class="mk" aria-label="penanda $1">$1</span>');
+function stepHTML(x){const m=x.match(/^\[(\d)\]\s*/);const badge=m?`<span class="mk">${m[1]}</span>`:`<span class="mk dot"></span>`;return `<li>${badge}<span>${mk(m?x.slice(m[0].length):x)}</span></li>`}
+function shots(m){const imgs=[].concat(m.img||[]),caps=[].concat(m.cap||[]);if(!imgs.length)return "";const h=imgs.map((n,i)=>shot(n,caps[i]||caps[0]||"",m.wide)).join("");return imgs.length>1?`<div class="shots">${h}</div>`:h}
 function manualHTML(){
   return `<div class="manual">
   <div class="manual-head"><div><h2 class="section-title">Manual Luna Money Tool</h2><p class="lede">Panduan langkah demi langkah memakai Luna di HP dan laptop. Ketuk judul di daftar isi untuk langsung ke bagiannya.</p></div></div>
   <div class="search"><i data-lucide="search"></i><input class="input" id="manQ" placeholder="Cari di panduan, misalnya: PIN, scan, anggaran" aria-label="Cari di panduan"></div>
   <nav class="toc" aria-label="Daftar isi">${MANUAL.map((m,i)=>`<button data-jump="man-${m.id}"><span class="num">${i+1}</span>${m.t}</button>`).join("")}<button data-jump="man-faq"><span class="num">?</span>Tanya jawab</button></nav>
-  ${MANUAL.map((m,i)=>`<section class="card man-sec ${m.wide?"is-wide":""}" id="man-${m.id}" data-text="${esc((m.t+" "+m.p+" "+m.s.join(" ")+" "+(m.tip||"")+" "+(m.warn||"")).replace(/<[^>]+>/g,"").toLowerCase())}">
+  ${MANUAL.map((m,i)=>`<section class="card man-sec ${m.wide?"is-wide":""} ${[].concat(m.img||[]).length>1?"multi":""}" id="man-${m.id}" data-text="${esc((m.t+" "+m.p+" "+m.s.join(" ").replace(/\[\d\]/g,"")+" "+(m.tip||"")+" "+(m.warn||"")).replace(/<[^>]+>/g,"").toLowerCase())}">
     <div class="man-body"><div class="man-title"><span class="step-no">${i+1}</span><h3>${m.t}</h3></div>
-      <p>${m.p}</p><ol>${m.s.map(x=>`<li>${x}</li>`).join("")}</ol>
+      <p>${m.p}</p><ol>${m.s.map(stepHTML).join("")}</ol>
       ${m.tip?`<div class="note tip"><i data-lucide="lightbulb"></i><span>${m.tip}</span></div>`:""}
       ${m.warn?`<div class="note warn"><i data-lucide="alert-triangle"></i><span>${m.warn}</span></div>`:""}</div>
-    ${m.img?shot(m.img,m.cap,m.wide):""}
+    ${shots(m)}
   </section>`).join("")}
   <section class="card man-sec" id="man-faq" data-text="${esc(FAQ.flat().join(" ").toLowerCase())}"><div class="man-body"><div class="man-title"><span class="step-no">?</span><h3>Tanya jawab</h3></div>
     ${FAQ.map(([q,a])=>`<details class="faq"><summary>${q}</summary><p>${a}</p></details>`).join("")}</div></section>
