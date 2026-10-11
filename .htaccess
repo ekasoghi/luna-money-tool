@@ -1,5 +1,6 @@
 # Luna Money Tool — untuk hosting cPanel / Apache
 # Paksa HTTPS (wajib untuk login terenkripsi dan kamera)
+DirectoryIndex index.html
 RewriteEngine On
 RewriteCond %{HTTPS} off
 RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
