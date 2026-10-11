@@ -292,6 +292,115 @@ code.k{overflow-wrap:anywhere;background:var(--bg);border:1px solid var(--line);
 .kv{display:grid;grid-template-columns:auto 1fr;gap:6px 14px;font-size:13.5px}
 .kv dt{color:var(--muted)} .kv dd{margin:0;font-weight:600;min-width:0;overflow-wrap:anywhere}
 
+/* ---------- period bar: panah mengapit label ---------- */
+.period .pnav{display:flex;align-items:center;gap:8px;min-width:0}
+.period .pnav .icon-btn{width:34px;height:34px}
+.period .pnav .label{min-width:0}
+.toolbar{display:flex;gap:8px;flex-wrap:wrap}
+.menu-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.menu-grid button{border:1px solid var(--line);background:var(--surface);border-radius:14px;padding:14px 6px;display:flex;flex-direction:column;align-items:center;gap:8px;font-size:12px;font-weight:600;color:var(--fg);text-align:center;line-height:1.25}
+.menu-grid button svg{width:22px;height:22px;color:var(--moon)}
+.menu-grid button[aria-current="page"]{border-color:var(--moon);background:var(--surface-2)}
+
+/* ---------- HP: tampilan ringkas agar semua menu & fitur terlihat ---------- */
+@media (max-width:600px){
+  body{font-size:14px}
+  input,select,textarea,.input{font-size:16px!important} /* cegah zoom otomatis iPhone saat mengetik */
+  .main{padding:calc(0px + var(--safe-t)) 12px calc(84px + var(--safe-b))}
+  .wrap{gap:12px}
+  .topbar{position:sticky;top:0;z-index:25;display:grid;grid-template-columns:1fr auto;grid-template-areas:"brand acc" "seg seg";gap:8px;
+    margin:calc(-1 * var(--safe-t)) -12px 0;padding:calc(8px + var(--safe-t)) 12px 10px;background:rgba(10,20,48,.94);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+  .topbar .brand{grid-area:brand;gap:8px}
+  .topbar .brand .moon{width:24px;height:24px}
+  .topbar .brand .moon::after{width:24px;height:24px;left:7px;top:-4px}
+  .topbar .brand b{font-size:19px}
+  .topbar .brand small{display:none}
+  #settingsBtn{grid-area:acc;width:34px;height:34px;border-radius:10px}
+  #bookSeg{grid-area:seg;display:grid;grid-template-columns:repeat(3,1fr);width:100%}
+  #bookSeg button,.topbar .seg button{padding:6px 4px;font-size:12.5px}
+  .period{flex-direction:column;align-items:stretch;gap:8px}
+  .period .modes{display:grid;grid-template-columns:repeat(4,1fr);width:100%;overflow:visible}
+  .period .modes button{padding:6px 2px;font-size:12px}
+  .period .pnav{justify-content:space-between}
+  .period .pnav .label{flex:1;text-align:center;font-size:17px;line-height:1.2}
+  .period .pnav .label .pill{display:block;width:max-content;margin:3px auto 0;font-size:10.5px}
+  .period .nav .icon-btn,.period .pnav .icon-btn{width:32px;height:32px}
+  .period .today{align-self:center}
+  .card{padding:14px;border-radius:12px}
+  .card h3{font-size:11.5px;margin-bottom:10px}
+  .hero{padding:16px}
+  .hero::before{width:170px;height:170px;right:-50px;top:-60px}
+  .hero .k{font-size:10.5px;letter-spacing:.1em}
+  .hero .big{font-size:30px;margin:4px 0 2px}
+  .hero .sub{font-size:12px}
+  .split{gap:8px;margin-top:12px}
+  .split .box{padding:9px 10px}
+  .split .box .t{font-size:11px}
+  .split .box .v{font-size:15px}
+  .stat-row,.grid{gap:10px}
+  .stat{padding:10px 11px;border-radius:10px}
+  .stat .t{font-size:11px}
+  .stat .v{font-size:clamp(13px,4.1vw,16px);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .stat .h{font-size:10.5px}
+  .chart-box{height:190px}
+  .chart-box.sm{height:170px}
+  .section-title{font-size:22px;line-height:1.2}
+  .lede{font-size:12.5px}
+  .btn{padding:9px 12px;font-size:13.5px}
+  .btn.sm{padding:7px 10px;font-size:12.5px}
+  .toolbar{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;margin:0 -12px;padding:0 12px}
+  .toolbar::-webkit-scrollbar{display:none}
+  .toolbar .btn{flex:none}
+  .report-head{flex-direction:column;align-items:stretch!important;gap:8px}
+  .tx{gap:10px;padding:9px 2px}
+  .cat-ico{width:34px;height:34px;border-radius:10px}
+  .cat-ico svg{width:16px;height:16px}
+  .tx .mid .t1{font-size:13.5px}
+  .tx .amt{font-size:13.5px}
+  .tx-day{font-size:11.5px;padding:12px 2px 5px}
+  .catrow{gap:10px;padding:7px 0}
+  .catrow .nm{font-size:12.5px}
+  .insight{gap:10px;padding:10px 0}
+  .insight p{font-size:13px}
+  .insight .s{font-size:12px}
+  .insight .ic{width:28px;height:28px}
+  table.tbl{font-size:12.5px;min-width:440px}
+  .tbl th{font-size:10.5px;padding:7px 5px}
+  .tbl td{padding:7px 5px}
+  .pl .ln{padding:7px 0;font-size:13px}
+  .pl .ln.sub{font-size:12.5px;padding-left:10px}
+  .pl .ln.grand{font-size:18px}
+  .quick-actions{display:grid!important;grid-template-columns:repeat(3,1fr);gap:8px}
+  .quick-actions .btn{flex-direction:column;gap:4px;padding:9px 4px;font-size:11.5px}
+  .sheet{padding:14px 14px calc(14px + var(--safe-b));max-height:90vh}
+  .sheet-h h2{font-size:21px}
+  .amount-in{font-size:28px!important}
+  .cat-grid{grid-template-columns:repeat(3,1fr);gap:6px}
+  .cat-grid button{font-size:10.5px;padding:8px 4px}
+  .budget-row .input{width:120px}
+  .bottom{padding:4px 4px calc(4px + var(--safe-b))}
+  .bottom button{font-size:10px}
+  .bottom .scan span.fab{width:50px;height:50px;border-radius:16px;margin-top:-22px}
+  .gate{padding:calc(16px + var(--safe-t)) 14px calc(16px + var(--safe-b))}
+  .gate-card{gap:14px}
+  .gate-brand .moon{width:48px;height:48px}
+  .gate-brand .moon::after{width:48px;height:48px;left:14px;top:-8px}
+  .gate-brand h1{font-size:28px}
+  .gate .card{padding:16px}
+  .source button{padding:14px;flex-direction:row;align-items:center;gap:12px}
+  .source button .ic{flex:none}
+  .source button span{display:block}
+  .drop{display:none}
+}
+@media (max-width:360px){
+  .main{padding-left:10px;padding-right:10px}
+  .topbar{margin-left:-10px;margin-right:-10px;padding-left:10px;padding-right:10px}
+  .hero .big{font-size:26px}
+  .split .box .v{font-size:13.5px}
+  .period .modes button{font-size:11px}
+  .menu-grid{grid-template-columns:repeat(2,1fr)}
+}
+
 @media print{
   body{background:#fff;color:#000}
   .side,.bottom,.topbar,.no-print,.toast,.gate{display:none!important}
@@ -915,8 +1024,10 @@ const NAV=[
 ];
 function renderNav(){
   $("#sideNav").innerHTML=NAV.map(n=>`<button data-view="${n.id}" ${state.view===n.id?'aria-current="page"':""}><i data-lucide="${n.i}"></i>${n.n}</button>`).join("");
-  const b=[NAV[0],NAV[1],null,NAV[3],NAV[2]];
-  $("#bottomNav").innerHTML=b.map(n=>n?`<button data-view="${n.id}" ${state.view===n.id||(n.id==="report"&&state.view==="insight")?'aria-current="page"':""}><i data-lucide="${n.i}"></i>${n.n}</button>`:`<button class="scan" data-act="scan" aria-label="Scan atau upload nota"><span class="fab"><i data-lucide="scan-line"></i></span><em>Nota</em></button>`).join("");
+  const inMenu=["budget","insight","settings"].includes(state.view);
+  $("#bottomNav").innerHTML=[NAV[0],NAV[1],null,NAV[3],"menu"].map(n=>n==="menu"?`<button data-act="menu" ${inMenu?'aria-current="page"':""}><i data-lucide="layout-grid"></i>Menu</button>`
+    :n?`<button data-view="${n.id}" ${state.view===n.id?'aria-current="page"':""}><i data-lucide="${n.i}"></i>${n.n}</button>`
+    :`<button class="scan" data-act="scan" aria-label="Scan atau upload nota"><span class="fab"><i data-lucide="scan-line"></i></span><em>Nota</em></button>`).join("");
   $$("#bookSeg button").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.book===state.book)));
   $("#avatarTop").textContent=((Auth.acc?.name||"L")[0]||"L").toUpperCase();
 }
@@ -926,11 +1037,11 @@ function go(v){state.view=v;render();window.scrollTo(0,0);try{history.replaceSta
 function periodBar(withModes=true){
   const r=range(state.mode,state.anchor);
   return `<div class="period">
-    ${withModes?`<div class="seg" role="group" aria-label="Periode">${MODES.map(([m,l])=>`<button data-mode="${m}" aria-pressed="${state.mode===m}">${l}</button>`).join("")}</div>`:""}
-    <div class="nav"><button class="icon-btn" data-shift="-1" aria-label="Periode sebelumnya"><i data-lucide="chevron-left"></i></button>
-    <button class="icon-btn" data-shift="1" aria-label="Periode berikutnya"><i data-lucide="chevron-right"></i></button></div>
+    ${withModes?`<div class="seg modes" role="group" aria-label="Periode">${MODES.map(([m,l])=>`<button data-mode="${m}" aria-pressed="${state.mode===m}">${l}</button>`).join("")}</div>`:""}
+    <div class="pnav"><button class="icon-btn" data-shift="-1" aria-label="Periode sebelumnya"><i data-lucide="chevron-left"></i></button>
     <div class="label">${r.label}${r.sub?` <span class="pill" style="font-family:var(--body);vertical-align:middle">${r.sub}</span>`:""}</div>
-    ${(today()<r.start||today()>r.end)?`<button class="btn sm ghost" data-act="today">Kembali ke ${({day:"hari",week:"minggu",month:"bulan",year:"tahun"})[state.mode]} ini</button>`:""}
+    <button class="icon-btn" data-shift="1" aria-label="Periode berikutnya"><i data-lucide="chevron-right"></i></button></div>
+    ${(today()<r.start||today()>r.end)?`<button class="btn sm ghost today" data-act="today">Kembali ke ${({day:"hari",week:"minggu",month:"bulan",year:"tahun"})[state.mode]} ini</button>`:""}
   </div>`;
 }
 function txRow(t,showBal){
@@ -1049,9 +1160,9 @@ function viewHome(){
       <h3><i data-lucide="pencil"></i>Catat cepat</h3>
       <form class="quick" id="quickForm"><input class="input" id="quickIn" placeholder="cth: bensin 50rb, gaji 8jt, token listrik 200000" autocomplete="off" aria-label="Catat cepat"><button class="btn primary" aria-label="Simpan"><i data-lucide="send"></i></button></form>
       <div class="helptext" id="quickHint" style="margin-top:8px">Nominal bisa ditulis 35rb, 1,5jt, atau 35000. Kategori dipilih otomatis.</div>
-      <div class="row" style="margin-top:14px">
+      <div class="row quick-actions" style="margin-top:14px">
         <button class="btn sm" data-act="camera"><i data-lucide="camera"></i>Foto nota</button>
-        <button class="btn sm" data-act="gallery"><i data-lucide="images"></i>Upload dari galeri</button>
+        <button class="btn sm" data-act="gallery"><i data-lucide="images"></i>Dari galeri</button>
         <button class="btn sm" data-act="add"><i data-lucide="plus"></i>Form lengkap</button>
       </div>
     </div>
@@ -1201,8 +1312,8 @@ function viewReport(){
     : rows.map(x=>`<tr class="${x.future||(!x.n&&state.mode!=="week")?"quiet":""}"><td>${esc(x.label)}${x.sub?`<div class="kbd">${esc(x.sub)}</div>`:""}</td><td class="r num">${x.future?"—":rp(x.open)}</td><td class="r num in">${x.in?rp(x.in):"—"}</td><td class="r num out">${x.out?rp(x.out):"—"}</td><td class="r num ${x.in-x.out<0?"out":""}">${x.future?"—":rp(x.in-x.out)}</td><td class="r num">${x.future?"—":rp(x.close)}</td></tr>`).join("");
   const foot=state.mode==="day"?`<tr class="total"><td>Total</td><td class="r num in">${rp(t.in)}</td><td class="r num out">${rp(t.out)}</td><td class="r num">${rp(st.close)}</td></tr>`
     :`<tr class="total"><td>Total</td><td class="r num">${rp(st.open)}</td><td class="r num in">${rp(t.in)}</td><td class="r num out">${rp(t.out)}</td><td class="r num">${rp(t.net)}</td><td class="r num">${rp(st.close)}</td></tr>`;
-  return `<div class="row no-print"><div style="min-width:0"><h2 class="section-title">Laporan Arus Kas ${modeName}</h2><p class="lede">Buku ${bookName} · ${esc(r.label)}${r.sub?" ("+r.sub+")":""}.</p></div><span class="spacer"></span>
-    <button class="btn sm" data-act="export-cash"><i data-lucide="download"></i>CSV laporan</button><button class="btn sm" data-act="export-csv"><i data-lucide="download"></i>CSV transaksi</button><button class="btn sm" data-act="print"><i data-lucide="file-text"></i>Cetak / PDF</button></div>
+  return `<div class="row no-print report-head"><div style="min-width:0"><h2 class="section-title">Laporan Arus Kas ${modeName}</h2><p class="lede">Buku ${bookName} · ${esc(r.label)}${r.sub?" ("+r.sub+")":""}.</p></div><span class="spacer"></span>
+    <div class="toolbar"><button class="btn sm" data-act="export-cash"><i data-lucide="download"></i>CSV laporan</button><button class="btn sm" data-act="export-csv"><i data-lucide="download"></i>CSV transaksi</button><button class="btn sm" data-act="print"><i data-lucide="file-text"></i>Cetak / PDF</button></div></div>
   ${periodBar()}
   <div class="stat-row">
     <div class="stat"><div class="t">Saldo awal</div><div class="v num">${rp(st.open)}</div></div>
@@ -1436,6 +1547,21 @@ function openForm(init={},opts={}){
   });
   setTimeout(()=>{if(!f.a) aIn.focus()},60);
 }
+function openMenu(){
+  const root=$("#modalRoot"); root.onclick=null;
+  const items=[["view","home","layout-dashboard","Beranda"],["view","tx","list","Transaksi"],["view","report","bar-chart-3","Laporan Arus Kas"],
+    ["view","budget","target","Anggaran"],["view","insight","sparkles","Analisa"],["view","settings","settings","Akun & Pengaturan"],
+    ["act","add","plus","Tambah Transaksi"],["act","gallery","images","Upload dari Galeri"],["act","lock","lock","Kunci Aplikasi"]];
+  root.innerHTML=`<div class="overlay" id="ov"><div class="sheet"><div class="sheet-h"><h2>Menu</h2><button class="icon-btn" data-close aria-label="Tutup"><i data-lucide="x"></i></button></div>
+    <div class="menu-grid">${items.map(([k,v,i,n])=>`<button data-m${k}="${v}" ${k==="view"&&state.view===v?'aria-current="page"':""}><i data-lucide="${i}"></i>${n}</button>`).join("")}</div></div></div>`;
+  icons();
+  $("#ov").addEventListener("click",e=>{
+    if(e.target.id==="ov"||e.target.closest("[data-close]")){closeModal();return}
+    const v=e.target.closest("[data-mview]");if(v){closeModal();go(v.dataset.mview);return}
+    const a=e.target.closest("[data-mact]");if(a){const act=a.dataset.mact;closeModal();
+      if(act==="add")openForm();else if(act==="gallery")pickImage(f=>Scan.start(f,"gallery"),"gallery");else if(act==="lock")Auth.lock()}
+  });
+}
 function closeModal(keepQueue){const r=$("#modalRoot");r.onclick=null;r.innerHTML="";Scan.abort();if(!keepQueue)Scan.queue=[]}
 
 /* ---------------- Scan & upload nota / bukti pembayaran ---------------- */
@@ -1608,6 +1734,7 @@ document.addEventListener("click",async e=>{
   const a=e.target.closest("[data-act]");if(!a)return;
   switch(a.dataset.act){
     case "scan":openSourceChooser();break;
+    case "menu":openMenu();break;
     case "camera":pickImage(f=>Scan.start(f,"camera"),"camera");break;
     case "gallery":pickImage(f=>Scan.start(f,"gallery"),"gallery");break;
     case "add":openForm();break;
